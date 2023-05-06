@@ -19,7 +19,7 @@ schema_view = get_schema_view(
         default_version='v1',
         description="This is the Health Pilot API with all the end points.",
         terms_of_service="https://www.google.com/policies/terms/",
-        contact=openapi.Contact(email="menilikeshetu@healthpilot.ai"),
+        contact=openapi.Contact(email="menilik.eshetu@singularitynet.io"),
         license=openapi.License(name="BSD License"),
     ),
     public=True,
