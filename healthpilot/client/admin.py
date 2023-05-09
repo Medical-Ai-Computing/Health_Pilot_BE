@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, EmergencyContact, Disease, Tag, Category, Article
+from .models import User, EmergencyContact, Disease, Tag, Category, Article, Doctor
 
 admin.site.site_header = "Health Pilot ADMIN"
 admin.site.site_title = "Health Pilot Admin Portal"
@@ -31,3 +31,7 @@ class CategoryAdmin(admin.ModelAdmin):
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
     list_display = [field.name for field in Article._meta.fields]
+
+@admin.register(Doctor)
+class ArticleAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in Doctor._meta.fields]
