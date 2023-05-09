@@ -35,7 +35,7 @@ class EmergencyContactAPIView(mixins.CreateModelMixin,
     serializer_class = EmergencyContactSerializer
     queryset = EmergencyContact.objects.all()
 
-class DiseaseAPIView(mixins.CreateModelMixin,
+class DiseaseViewSet(mixins.CreateModelMixin,
                     mixins.UpdateModelMixin,
                     mixins.RetrieveModelMixin,
                     mixins.ListModelMixin,
