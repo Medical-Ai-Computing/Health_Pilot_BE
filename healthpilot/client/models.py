@@ -120,5 +120,36 @@ class Article(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def __str__(self) -> str:
+    def __str__(self):
         return str(self.article_id)
+    
+class Doctor(models.Model):
+    '''used to send the health report of users to selected doctors
+    and this is the doctor contact information'''
+
+    SPECIALIZATION_CHOICES = [('AN', 'Anesthesiologist'), ('CA', 'Cardiologist'),
+                              ('DE', 'Dermatologist'),    ('EN', 'Endocrinologist'),
+                              ('FA', 'Family medicine'),  ('GA', 'Gastroenterologist'),
+                              ('GE', 'Geriatrician'),     ('HA', 'Hematologist'),
+                              ('IM', 'Internal medicine'),('IMM', 'Immunologist'),
+                              ('NE', 'Nephrologist'),     ('NEU', 'Neurologist'),
+                              ('OB', 'Obstetrics and gynaecology'),
+                              ('ON', 'Oncologist'),       ('OP', 'Ophthalmology'),
+                              ('PA', 'Pathologist'),      ('PD', 'Pediatrician'),
+                              ('PE', 'Pediatrics'),       ('PS', 'Psychiatrist'),
+                              ('PU', 'Pulmonologist'),    ('RA', 'Radiologist'),
+                              ('RH', 'Rheumatologist'),   ('SU', 'Surgeon'),
+                              ('UR', 'Urologist'),        ('OTHER', 'Other')]
+    
+    doctor_name = models.CharField(max_length=100)
+    doctor_type = models.CharField(choices=SPECIALIZATION_CHOICES, max_length=5, default='OTHER', blank=True, null=True)
+    email=models.EmailField(blank=True, null=True)
+    cell_phone=models.CharField(max_length=15, null=True)
+    patient = models.ForeignKey(User , null=True, on_delete=models.SET_NULL)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        for choice in self.SPECIALIZATION_CHOICES:
+            if choice[0] == self.SPECIALIZATION_CHOICES:
+                return f"Dr. {self.doctor_name}, ({choice[1]})"
+        return f"{self.doctor_name} (Other Specialty)"
