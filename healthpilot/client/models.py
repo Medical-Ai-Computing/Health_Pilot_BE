@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.db.models.query_utils import Q
+from django.contrib.postgres.fields import ArrayField
 from datetime import date
 
 class User(models.Model):
@@ -80,10 +81,11 @@ class Disease(models.Model):
 
     disease_name = models.CharField(max_length = 200)
     no_of_symp = models.IntegerField()
-    symptoms_name = models.CharField(max_length=300)
+    symptoms_name = ArrayField(models.CharField(max_length=300))
     confidence = models.DecimalField(max_digits=5, decimal_places=2)
     consultdoctor = models.CharField(max_length = 200)
     allargis = models.CharField(max_length=400, null=True, blank=True)
+    # created_at = models.DateTimeField(default=timezone.now)
 
 class Category(models.Model):
     '''catagory of the artcile for recommendation system'''
@@ -151,5 +153,5 @@ class Doctor(models.Model):
     def __str__(self):
         for choice in self.SPECIALIZATION_CHOICES:
             if choice[0] == self.SPECIALIZATION_CHOICES:
-                return f"Dr. {self.doctor_name}, ({choice[1]})"
+                return f"Dr. {self.doctor_name} ({choice[1]})"
         return f"{self.doctor_name} (Other Specialty)"
