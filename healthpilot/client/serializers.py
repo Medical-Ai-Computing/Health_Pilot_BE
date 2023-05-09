@@ -1,5 +1,5 @@
 from django.db.models import Q
-from .models import User, Article, Disease, EmergencyContact, Category
+from .models import User, Article, Disease, EmergencyContact, Category, Doctor
 from rest_framework import serializers
 
 class UserSerializer(serializers.ModelSerializer):
@@ -45,3 +45,8 @@ class DiseaseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Disease
         fields = ['patient', 'disease_name', 'no_of_symp', 'symptoms_name', 'confidence', 'consultdoctor', 'allargis' ]
+
+class DoctorsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Doctor
+        fields = ['doctor_name', 'doctor_type', 'email', 'cell_phone', 'patient']
