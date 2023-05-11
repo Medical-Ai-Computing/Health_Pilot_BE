@@ -64,7 +64,7 @@ class DoctorViewSet(mixins.CreateModelMixin,
 
 class PaymentCreateView(generics.CreateAPIView):
     '''used to process the payment'''
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     serializer_class = PaymentSerializer
 
     def post(self, request, *args, **kwargs):
@@ -80,7 +80,7 @@ class PaymentCreateView(generics.CreateAPIView):
 
         return super().post(request, *args, **kwargs)
         #TODO try to add 400 bad request up here if the payment not successfull
-        
+
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
         serializer.instance.is_paid = True
