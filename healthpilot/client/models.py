@@ -198,7 +198,7 @@ class Payment(models.Model):
                         ('paypal', 'PayPal'),
                         ('creditcard', 'Credit Card')]
     
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='memberships_payment')
     payment_date = models.DateTimeField(auto_now_add=True)
     amount = models.DecimalField(max_digits=8, decimal_places=2)
     payment_method = models.CharField(max_length=50, choices=PAYMENT_CHOICES)
