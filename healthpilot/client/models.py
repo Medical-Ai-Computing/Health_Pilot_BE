@@ -219,4 +219,4 @@ class Membership(models.Model):
         self.save()
 
     def __str__(self):
-        return f"{self.user.username}'s {self.membership_type} membership"
+        return f"{self.user.username}'s membership {self.membership_type}"
