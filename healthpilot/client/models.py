@@ -9,7 +9,11 @@ class User(models.Model):
     full_name=models.CharField(max_length=50)
 
     date_of_birth=models.DateField()
-    age = models.IntegerField(null=True, blank=True)
+    age = models.PositiveIntegerField(null=True, blank=True)
+    # weight in kilogram
+    weight = models.FloatField(default=0)
+    #store user hegith in CentiMeter
+    height = models.FloatField(default=0)
 
     joined_at=models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(default=timezone.now)
@@ -71,21 +75,52 @@ class EmergencyContact(models.Model):
     email=models.EmailField(blank=True, null=True)
     cell_phone=models.CharField(max_length=15, null=True)
     patient = models.ForeignKey(User , null=True, on_delete=models.SET_NULL)
+    created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self) -> str:
         return '{first_name} {last_name} for {patient}'
     
 class Disease(models.Model):
     '''Dieases information for users'''
-    patient = models.ForeignKey(User , null=True, on_delete=models.SET_NULL)
+    BLOOD_TYPE_CHOICES= [
+                        ('A_POSITIVE', 'A+'),
+                        ('A_NEGATIVE', 'A-'),
+                        ('B_POSITIVE', 'B+'),
+                        ('B_NEGATIVE', 'B-'),
+                        ('AB_POSITIVE', 'AB+'),
+                        ('AB_NEGATIVE', 'AB-'),
+                        ('O_POSITIVE', 'O+'),
+                        ('O_NEGATIVE', 'O-'),
+                        ('DK','i Dont Know')]
+    CHOICES = [
+            ('Y', 'Yes'),
+            ('N', 'No'),
+            ('DK', "I don't know")]
 
+    patient = models.ForeignKey(User , null=True, on_delete=models.SET_NULL)
     disease_name = models.CharField(max_length = 200)
     no_of_symp = models.IntegerField()
     symptoms_name = ArrayField(models.CharField(max_length=300))
     confidence = models.DecimalField(max_digits=5, decimal_places=2)
     consultdoctor = models.CharField(max_length = 200)
     allargis = models.CharField(max_length=400, null=True, blank=True)
-    # created_at = models.DateTimeField(default=timezone.now)
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(default=timezone.now)
+    # basic question with choices fileds
+    blood_type = models.CharField(max_length=11, choices=BLOOD_TYPE_CHOICES, null=True, default='DK')
+    blood_pressure = models.CharField(max_length=2, choices=CHOICES,  default='N')
+    chronic_condition = models.CharField(max_length=2, choices=CHOICES, default='N')
+    smoke = models.CharField(max_length=2, choices=CHOICES, default='N')
+    alcohol = models.CharField(max_length=2, choices=CHOICES, default='N')
+    recent_surgeries = models.CharField(max_length=2, choices=CHOICES, default='N')
+    infectious_diseases = models.CharField(max_length=2, choices=CHOICES, default='N')
+    #TODO i want to ask the user pregenancy based on gender type
+    is_pregnant = models.CharField(max_length=2, choices=CHOICES, default='DK')
+
+    # def save(self, *args, **kwargs):
+    #     if self.patient.gender == 'M':
+    #         self.is_pregnant = False
+    #         super().save(*args, **kwargs)
 
 class Category(models.Model):
     '''catagory of the artcile for recommendation system'''
