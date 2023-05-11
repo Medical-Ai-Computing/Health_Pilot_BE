@@ -1,5 +1,5 @@
 from django.db.models import Q
-from .models import User, Article, Disease, EmergencyContact, Category, Doctor
+from .models import User, Article, Disease, EmergencyContact, Category, Doctor, Payment
 from rest_framework import serializers
 
 class UserSerializer(serializers.ModelSerializer):
@@ -52,3 +52,9 @@ class DoctorsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Doctor
         fields = ['doctor_name', 'doctor_type', 'email', 'cell_phone', 'patient']
+        
+# payment serializers
+class PaymentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payment
+        fields = ['id', 'user', 'payment_date', 'amount', 'payment_method', 'is_paid']
