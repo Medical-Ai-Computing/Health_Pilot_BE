@@ -191,3 +191,32 @@ class Doctor(models.Model):
                 return f"Dr. {self.doctor_name} ({choice[1]})"
         return f"{self.doctor_name} (Other Specialty)"
     
+# the down code is for payment and membership status
+
+class Payment(models.Model):
+    PAYMENT_CHOICES =  [('bank', 'Bank Transfer'),
+                        ('paypal', 'PayPal'),
+                        ('creditcard', 'Credit Card')]
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    payment_date = models.DateTimeField(auto_now_add=True)
+    amount = models.DecimalField(max_digits=8, decimal_places=2)
+    payment_method = models.CharField(max_length=50, choices=PAYMENT_CHOICES)
+    is_paid = models.BooleanField(default=False)
+
+class Membership(models.Model):
+    MEMBERSHIP_FIELD = [('F', 'Free'), ('P','Premium')]
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='memberships')
+    membership_type = models.CharField(max_length=10, choices=MEMBERSHIP_FIELD,  default='Free')
+    start_date = models.DateTimeField(auto_now_add=True)
+    end_date = models.DateTimeField(null=True, blank=True)
+
+    def activate_premium_membership(self):
+        '''membership active period is 30 days or 1 month'''
+        self.membership_type = 'Premium'
+        self.end_date = timezone.now() + timezone.timedelta(days=30) 
+        self.save()
+
+    def __str__(self):
+        return f"{self.user.username}'s {self.membership_type} membership"
