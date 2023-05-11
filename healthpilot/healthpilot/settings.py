@@ -57,24 +57,18 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'healthpilot.wsgi.application'
 
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.environ.get('DB_NAME', 'healthpilot'),
+        'USER': os.environ.get('DB_USER', 'mark'),
+        'PASSWORD': os.environ.get('DB_PASS', '1Amynameiso**'),
+        'HOST': os.environ.get('DB_HOST', 'localhost'),
+        'PORT': 5432,
+        'DISABLE_SERVER_SIDE_CURSORS': True,
     }
 }
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': os.environ.get('DB_NAME', 'xccelerando'),
-#         'USER': os.environ.get('DB_USER', 'mark'),
-#         'PASSWORD': os.environ.get('DB_PASS'),
-#         'HOST': os.environ.get('DB_HOST', 'db'),
-#         'PORT': 5432,
-#         'DISABLE_SERVER_SIDE_CURSORS': True,
-#     }
-# }
 
 
 AUTH_PASSWORD_VALIDATORS = [
