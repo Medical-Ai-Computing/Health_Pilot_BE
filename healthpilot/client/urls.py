@@ -27,6 +27,6 @@ urlpatterns = [
     path('', include(emergency_contact_router.urls)),
     path('', include(disease_router.urls)),
     path('', include(article_router.urls)),
-
+    path('payment/', PaymentCreateView.as_view(), name='payment'),
     
 ]
