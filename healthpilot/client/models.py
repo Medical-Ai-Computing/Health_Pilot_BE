@@ -100,7 +100,7 @@ class Disease(models.Model):
     patient = models.ForeignKey(User , null=True, on_delete=models.SET_NULL)
     disease_name = models.CharField(max_length = 200)
     no_of_symp = models.IntegerField()
-    symptoms_name = ArrayField(models.CharField(max_length=300))
+    symptoms_name = models.CharField(max_length=300)
     confidence = models.DecimalField(max_digits=5, decimal_places=2)
     consultdoctor = models.CharField(max_length = 200)
     allargis = models.CharField(max_length=400, null=True, blank=True)
@@ -190,3 +190,4 @@ class Doctor(models.Model):
             if choice[0] == self.SPECIALIZATION_CHOICES:
                 return f"Dr. {self.doctor_name} ({choice[1]})"
         return f"{self.doctor_name} (Other Specialty)"
+    
