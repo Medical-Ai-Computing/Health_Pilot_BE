@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from django.db.models.query_utils import Q
+from django_countries.fields import CountryField
 from django.contrib.postgres.fields import ArrayField
 from datetime import date
 
@@ -28,7 +29,7 @@ class User(models.Model):
     email = models.EmailField(blank=True, null=True)
     address = models.CharField(max_length = 250, blank=True, null=True)
     mobile_no = models.CharField(max_length = 15, blank=True, null=True)
-    country = models.CharField(max_length=25, blank=True, null=True)
+    country = CountryField(blank=True, null=True, blank_label="(Select country)")
 
     @property
     def age(self):

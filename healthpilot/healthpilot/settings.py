@@ -24,7 +24,7 @@ INSTALLED_APPS = [
     'client.apps.ClientConfig',
      # since rest_framework_swagger is depricated(https://github.com/marcgibbons/django-rest-swagger),
     'drf_yasg',
-    # 'django-countries'
+    'django_countries'
 ]
 
 MIDDLEWARE = [
