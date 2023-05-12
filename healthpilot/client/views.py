@@ -64,19 +64,26 @@ class DoctorViewSet(mixins.CreateModelMixin,
 
 class PaymentCreateView(generics.CreateAPIView):
     '''used to process the payment'''
-    # permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated] # authenticated users can have editable forms
     serializer_class = PaymentSerializer
 
     def post(self, request, *args, **kwargs):
-        membership_type = request.user.membership.membership_type
+        print('before request data', request.data['user'], request.data)
+        # membership_type = request.user.membership.membership_type
+        membership_type = User.objects.get(id=request.data['user']).membership
 
-        if membership_type == 'free':
+        if membership_type == 'F':
             # request.user.membership.membership_type = 'premium'
             # request.user.membership.save()
+            print('---------- membership type is Free----------')
 
-            user = request.user
-            membership = user.membership
+            user_id = request.data['user']
+            print(user_id, 'user--id--id')
+            membership = Membership() # user.membership
             membership.activate_premium_membership()
+        else:
+            message = 'This user is already Premium user'
+            return Response({"message": message}, status=status.HTTP_400_BAD_REQUEST)
 
         return super().post(request, *args, **kwargs)
         #TODO try to add 400 bad request up here if the payment not successfull
