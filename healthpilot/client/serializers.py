@@ -6,16 +6,16 @@ class UserSerializer(serializers.ModelSerializer):
     '''Used to get and update users'''
     class Meta:
         model = User
-        fields = ['id','username', 'full_name', 'date_of_birth', 'age', 
-                  'weight', 'height','gender', 'membership']
+        fields = ['id','username', 'full_name', 'date_of_birth', 'gender', 'email', 
+                  'weight', 'height', 'membership', 'mobile_no', 'address'] #  'country', object not serializable fix it maybe by get_queryset
         read_only_fields = ['id']
 
 class EmergencyContactSerializer(serializers.ModelSerializer):
     '''used to get information of emergency contacts'''
     class Meta:
         model = EmergencyContact
-        fileds = ['first_name', 'last_name', 'relationship', 'address', 
-                  'email', 'cell_phone', 'patient']
+        fields = ['first_name', 'last_name', 'relationship', 'address', 
+                   'email', 'cell_phone', 'patient']
 
 class CategorySerializer(serializers.ModelSerializer):
 
