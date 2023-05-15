@@ -24,7 +24,7 @@ INSTALLED_APPS = [
     'client.apps.ClientConfig',
      # since rest_framework_swagger is depricated(https://github.com/marcgibbons/django-rest-swagger),
     'drf_yasg',
-    'django_countries'
+    # 'django-countries'
 ]
 
 MIDDLEWARE = [
@@ -62,7 +62,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': os.environ.get('DB_NAME', 'healthpilot'),
-        'USER': os.environ.get('DB_USER', 'mark'),
+        'USER': os.environ.get('DB_USER', 'mila'),
         'PASSWORD': os.environ.get('DB_PASS', '1Amynameiso**'),
         'HOST': os.environ.get('DB_HOST', 'localhost'),
         'PORT': 5432,
