@@ -7,19 +7,19 @@ from .views import *
 router = DefaultRouter()
 router.register('users', UserAPIView, basename='users')
 router.register('disease', DiseaseViewSet, basename='disease')
-router.register('article', UserAPIView, basename='articles')
-router.register('emergency_contact', UserAPIView, basename='emergency')
+router.register('article', ArticleAPIView, basename='articles')
+router.register('emergency_contact', EmergencyContactAPIView, basename='emergency')
 router.register('doctors', DoctorViewSet, basename='doctors')
 
 
-emergency_contact_router = NestedDefaultRouter(router, 'users', lookup='user')
+emergency_contact_router = NestedDefaultRouter(router, 'emergency_contact', lookup='emergency_contact')
 emergency_contact_router.register('emergency_contact', EmergencyContactAPIView, basename='emergency_contact')
 
-disease_router = NestedDefaultRouter(router, 'users', lookup='user')
+disease_router = NestedDefaultRouter(router, 'disease', lookup='disease')
 disease_router.register('disease', DiseaseViewSet, basename='disease')
 
-article_router = NestedDefaultRouter(router, 'users', lookup='user')
-article_router.register('article', ArticleAPIView, basename='articles')
+article_router = NestedDefaultRouter(router, 'article', lookup='article')
+article_router.register('article', ArticleAPIView, basename='articles') #TODO some errors
 
 
 urlpatterns = [
