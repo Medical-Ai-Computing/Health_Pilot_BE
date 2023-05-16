@@ -75,7 +75,7 @@ class EmergencyContact(models.Model):
     address=models.CharField(max_length=250)
     email=models.EmailField(blank=True, null=True)
     cell_phone=models.CharField(max_length=15, null=True)
-    patient = models.ForeignKey(User , null=True, on_delete=models.SET_NULL)
+    patient = models.ForeignKey(User , null=True, on_delete=models.SET_NULL, related_name='emergency_contacts')
     created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self) -> str:

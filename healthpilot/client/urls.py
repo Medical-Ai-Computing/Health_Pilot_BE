@@ -19,7 +19,7 @@ disease_router = NestedDefaultRouter(router, 'disease', lookup='disease')
 disease_router.register('disease', DiseaseViewSet, basename='disease')
 
 article_router = NestedDefaultRouter(router, 'article', lookup='article')
-article_router.register('article', ArticleAPIView, basename='articles') #TODO some errors
+article_router.register('article', ArticleAPIView, basename='articles') #TODO some errors .validate() should return the validated data, AssertionError
 
 
 urlpatterns = [
