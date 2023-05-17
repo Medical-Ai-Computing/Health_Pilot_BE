@@ -1,5 +1,5 @@
 from django.db.models import Q
-from .models import User, Article, Disease, EmergencyContact, Category, Doctor, Payment
+from .models import User, Article, Disease, EmergencyContact, Category, Doctor, Payment , UserProfile
 from rest_framework import serializers
 
 class UserSerializer(serializers.ModelSerializer):
@@ -9,6 +9,20 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id','username', 'full_name', 'date_of_birth', 'gender', 'email', 
                   'weight', 'height', 'membership', 'mobile_no', 'address'] #  'country', object not serializable fix it maybe by get_queryset
         read_only_fields = ['id']
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = ['user','about_me']
+
+        def validate_about_me(self, value):
+            """
+            Truncate the 'about_me' field if it is too long.
+            """
+            max_length = UserProfile._meta.get_field('about_me').max_length
+            if len(value) > max_length:
+                value = value[:max_length]
+            return value
 
 class EmergencyContactSerializer(serializers.ModelSerializer):
     '''used to get information of emergency contacts'''

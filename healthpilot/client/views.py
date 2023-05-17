@@ -5,14 +5,17 @@ from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import AuthenticationFailed
 from rest_framework import generics, mixins, status, viewsets
 
 import logging
 from django.db.models import Count
+from django.shortcuts import get_object_or_404
 from django.http import QueryDict
 from django.utils import timesince, timezone
-from .models import User, EmergencyContact, Disease, Article, Doctor, Payment, Membership
-from .serializers import UserSerializer, DiseaseSerializer, ArticleSerializer,EmergencyContactSerializer, DoctorsSerializer, PaymentSerializer
+from .models import User, EmergencyContact, Disease, Article, Doctor, Payment, Membership, UserProfile
+from .serializers import UserSerializer, DiseaseSerializer, ArticleSerializer,\
+                        EmergencyContactSerializer, DoctorsSerializer, PaymentSerializer, UserProfileSerializer
 
 class UserAPIView(mixins.CreateModelMixin,
                        mixins.RetrieveModelMixin,
@@ -22,6 +25,34 @@ class UserAPIView(mixins.CreateModelMixin,
                        GenericViewSet):
     serializer_class = UserSerializer
     queryset = User.objects.all()
+
+class UserProfileView(generics.RetrieveUpdateAPIView):
+    '''Api View for users About Me section to Get, Post and Put request'''
+    queryset = UserProfile.objects.all()
+    serializer_class = UserProfileSerializer
+
+    def get_object(self):
+        if not self.request.user.is_authenticated:
+            print('AuthenticationFailed usersssssss')
+            raise AuthenticationFailed()
+        
+        user = self.request.user.id
+        print(user, type(self.request.user), 'about me section---------------------')
+        try:
+            return UserProfile.objects.get(id=user)
+        except UserProfile.DoesNotExist:
+            print('user not found andddddddddddddddddddddd')
+            # Create a new UserProfile object for the user if one doesn't exist
+            return UserProfile.objects.create(id=user)
+
+    def update(self, request, *args, **kwargs):
+        print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~update~~~~')
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
 
 class ArticleAPIView(mixins.CreateModelMixin,
                        mixins.RetrieveModelMixin,
