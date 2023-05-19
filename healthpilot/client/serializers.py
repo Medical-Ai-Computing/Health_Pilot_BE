@@ -6,7 +6,7 @@ class UserSerializer(serializers.ModelSerializer):
     '''Used to get and update users'''
     class Meta:
         model = User
-        fields = ['id','username', 'full_name', 'date_of_birth', 'gender', 'email', 
+        fields = ['id','username', 'full_name', 'gender', 'email', 
                   'weight', 'height', 'membership', 'mobile_no', 'address'] #  'country', object not serializable fix it maybe by get_queryset
         read_only_fields = ['id']
 
