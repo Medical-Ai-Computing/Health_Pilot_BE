@@ -1,15 +1,17 @@
 from django.db import models
 from django.utils import timezone
 from django.db.models.query_utils import Q
+from django.core.exceptions import ValidationError
 from django_countries.fields import CountryField
+from django.contrib.auth.models import AbstractUser
 from django.contrib.postgres.fields import ArrayField
 from datetime import date
 
-class User(models.Model):
+class User(AbstractUser):
     username=models.CharField(max_length=50, null=True, blank=True)
     full_name=models.CharField(max_length=50)
 
-    date_of_birth=models.DateField()
+    # date_of_birth=models.DateField()
     age = models.PositiveIntegerField(null=True, blank=True)
     # weight in kilogram
     weight = models.FloatField(default=0)
@@ -31,14 +33,14 @@ class User(models.Model):
     mobile_no = models.CharField(max_length = 15, blank=True, null=True)
     country = CountryField(blank=True, null=True, blank_label="(Select country)")
 
-    @property
-    def age(self):
-        today = date.today()
-        db = self.date_of_birth
-        age = today.year - db.year
-        if today.month < db.month or today.month == db.month and today.day < db.day:
-            age -= 1
-        return age
+    # @property
+    # def age(self):
+    #     today = date.today()
+    #     db = self.date_of_birth
+    #     age = today.year - db.year
+    #     if today.month < db.month or today.month == db.month and today.day < db.day:
+    #         age -= 1
+    #     return age
 
     class Meta:
         constraints = [
@@ -52,7 +54,7 @@ class User(models.Model):
 
 class UserProfile(models.Model):
     '''user profile about me section'''
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     about_me = models.CharField(max_length=255 ,blank=True)
 
     def __str__(self):
@@ -85,6 +87,16 @@ class EmergencyContact(models.Model):
     cell_phone=models.CharField(max_length=15, null=True)
     patient = models.ForeignKey(User , null=True, on_delete=models.SET_NULL, related_name='emergency_contacts')
     created_at = models.DateTimeField(default=timezone.now)
+
+    def clean(self):
+        # Check if the user already has two emergency contacts
+        existing_contacts = EmergencyContact.objects.filter(patient=self.patient)
+        if existing_contacts.count() >= 3:
+            raise ValidationError("A user can have only two emergency contacts.")
+    
+    def save(self, *args, **kwargs):
+        self.clean()  # Run full validation before saving
+        super().save(*args, **kwargs)
 
     def __str__(self) -> str:
         return '{first_name} {last_name} for {patient}'
