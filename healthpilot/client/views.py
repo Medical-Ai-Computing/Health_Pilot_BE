@@ -36,14 +36,14 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
             print('AuthenticationFailed usersssssss')
             raise AuthenticationFailed()
         
-        user = self.request.user.id
+        user = self.request.user
         print(user, type(self.request.user), 'about me section---------------------')
         try:
-            return UserProfile.objects.get(id=user)
+            return UserProfile.objects.get(user=user)
         except UserProfile.DoesNotExist:
             print('user not found andddddddddddddddddddddd')
             # Create a new UserProfile object for the user if one doesn't exist
-            return UserProfile.objects.create(id=user)
+            return UserProfile.objects.create(user=user)
 
     def update(self, request, *args, **kwargs):
         print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~update~~~~')
@@ -61,21 +61,24 @@ class ArticleAPIView(mixins.CreateModelMixin,
     serializer_class = ArticleSerializer
     queryset = Article.objects.all()
 
-# class EmergencyContactAPIView(mixins.CreateModelMixin,
-#                        mixins.RetrieveModelMixin,
-#                        mixins.UpdateModelMixin,
-#                        mixins.ListModelMixin,
-#                        mixins.DestroyModelMixin,
-#                        GenericViewSet):
-#     '''user can list create retrive and update and destroy emergency contacts'''
-#     serializer_class = EmergencyContactSerializer
-#     queryset = EmergencyContact.objects.all()
+class EmergencyContactAPIView(mixins.CreateModelMixin,
+                       mixins.RetrieveModelMixin,
+                       mixins.UpdateModelMixin,
+                       mixins.ListModelMixin,
+                       mixins.DestroyModelMixin,
+                       GenericViewSet):
+    '''user can list create retrive and update and destroy emergency contacts'''
+    serializer_class = EmergencyContactSerializer
+    queryset = EmergencyContact.objects.all()
 
-class EmergencyContactAPIView(viewsets.ModelViewSet): # EmergencyContactViewSet
+
+class UserEmergencyContactAPIView(viewsets.ModelViewSet):
+    '''user can list create retrive and update and destroy users/emergency contacts'''
     serializer_class = EmergencyContactSerializer
     queryset = EmergencyContact.objects.all()
 
     def get_queryset(self):
+        print(self.kwargs['user_id'],'***********************************')
         user_id = self.kwargs['user_id']
         return EmergencyContact.objects.filter(user_id=user_id)
 
