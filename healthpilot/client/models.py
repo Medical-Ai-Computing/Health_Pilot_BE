@@ -11,7 +11,7 @@ class User(AbstractUser):
     username=models.CharField(max_length=50, null=True, blank=True)
     full_name=models.CharField(max_length=50)
 
-    # date_of_birth=models.DateField()
+    date_of_birth=models.DateField(null=True)
     age = models.PositiveIntegerField(null=True, blank=True)
     # weight in kilogram
     weight = models.FloatField(default=0)
@@ -33,14 +33,14 @@ class User(AbstractUser):
     mobile_no = models.CharField(max_length = 15, blank=True, null=True)
     country = CountryField(blank=True, null=True, blank_label="(Select country)")
 
-    # @property
-    # def age(self):
-    #     today = date.today()
-    #     db = self.date_of_birth
-    #     age = today.year - db.year
-    #     if today.month < db.month or today.month == db.month and today.day < db.day:
-    #         age -= 1
-    #     return age
+    @property
+    def age(self):
+        today = date.today()
+        db = self.date_of_birth
+        age = today.year - db.year
+        if today.month < db.month or today.month == db.month and today.day < db.day:
+            age -= 1
+        return age
 
     class Meta:
         constraints = [
@@ -136,13 +136,16 @@ class Disease(models.Model):
     recent_surgeries = models.CharField(max_length=2, choices=CHOICES, default='N')
     infectious_diseases = models.CharField(max_length=2, choices=CHOICES, default='N')
     #TODO i want to ask the user pregenancy based on gender type
-    is_pregnant = models.CharField(max_length=2, choices=CHOICES, default='DK')
+    is_pregnant = models.CharField(max_length=2, choices=CHOICES, default='N')
 
-    # def save(self, *args, **kwargs):
-    #     if self.patient.gender == 'M':
-    #         self.is_pregnant = False
-    #         super().save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        if self.patient.gender == 'Male':
+            self.is_pregnant = False
+            super().save(*args, **kwargs)
 
+    def __str__(self):
+        return "f{patient} - > {disease_name}"
+    
 class Category(models.Model):
     '''catagory of the artcile for recommendation system'''
     category = models.IntegerField()
@@ -151,7 +154,7 @@ class Category(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def __str__(self) -> str:
+    def __str__(self):
         return str(self.name)
     
 class Tag(models.Model):
@@ -162,7 +165,7 @@ class Tag(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def __str__(self) -> str:
+    def __str__(self):
         return self.name
     
 class Article(models.Model):
@@ -241,3 +244,43 @@ class Membership(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s membership {self.membership_type}"
+
+class AdditionalFeatures(models.Model):
+    '''a model for addition features such as notification and reminders'''
+    patient = models.ForeignKey(User, on_delete=models.CASCADE)
+    medication_reminders = models.BooleanField(default=False)
+    language_translation_services = models.BooleanField(default=False)
+    communication_with_healthcare_providers = models.BooleanField(default=False)
+    useful_health_tips_and_articles = models.BooleanField(default=False)
+    wearable_integration = models.BooleanField(default=False)
+    virtual_consultations = models.BooleanField(default=False)
+    appointment_scheduling = models.BooleanField(default=False)
+    health_coaching_services = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"Users Feature ({self.patient})"
+
+class HealthAssessmentSection(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    health_tracking_history = models.TextField()
+    recommended_history = models.TextField()
+    delete_health_profiles_option = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"HealthAssessmentSection ({self.id})"
+    
+class Medication(models.Model):
+    '''adding medication for a user with reminders and 
+        incorporating it into the user's health assessment story.'''
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='medications')
+    name = models.CharField(max_length=100)
+    dosage = models.CharField(max_length=50)
+    frequency = models.CharField(max_length=50)
+    start_date = models.DateField()
+    end_date = models.DateField(null=True, blank=True)
+
+    def __str__(self):
+        return self.name

@@ -1,12 +1,13 @@
 from django.db.models import Q
-from .models import User, Article, Disease, EmergencyContact, Category, Doctor, Payment , UserProfile
+from .models import User, Article, Disease, EmergencyContact, Category, \
+                    Doctor, Payment , UserProfile, HealthAssessmentSection, Medication
 from rest_framework import serializers
 
 class UserSerializer(serializers.ModelSerializer):
     '''Used to get and update users'''
     class Meta:
         model = User
-        fields = ['id','username', 'full_name', 'gender', 'email', 
+        fields = ['id','username', 'full_name', 'gender', 'email', 'date_of_birth',
                   'weight', 'height', 'membership', 'mobile_no', 'address'] #  'country', object not serializable fix it maybe by get_queryset
         read_only_fields = ['id']
 
@@ -60,7 +61,9 @@ class DiseaseSerializer(serializers.ModelSerializer):
     '''serialize Disease of users'''
     class Meta:
         model = Disease
-        fields = ['patient', 'disease_name', 'no_of_symp', 'symptoms_name', 'confidence', 'consultdoctor', 'allargis' ]
+        fields = ['patient', 'disease_name', 'no_of_symp', 'symptoms_name', 
+                  'confidence', 'consultdoctor', 'allargis', 'blood_type', 'blood_pressure',
+                   'chronic_condition', 'smoke', 'alcohol', 'recent_surgeries', 'infectious_diseases', 'is_pregnant' ]
 
 class DoctorsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -72,3 +75,13 @@ class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
         fields = ['id', 'user', 'payment_date', 'amount', 'payment_method', 'is_paid']
+    
+class HealthAssessmentSectionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = HealthAssessmentSection
+        fields = '__all__'
+
+class MedicationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Medication
+        fields = '__all__'
