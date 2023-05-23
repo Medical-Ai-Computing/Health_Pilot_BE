@@ -8,6 +8,7 @@ from django.contrib.postgres.fields import ArrayField
 from datetime import date
 
 class User(AbstractUser):
+    user = models.IntegerField()
     username=models.CharField(max_length=50, null=True, blank=True)
     full_name=models.CharField(max_length=50)
 
@@ -281,6 +282,15 @@ class Medication(models.Model):
     frequency = models.CharField(max_length=50)
     start_date = models.DateField()
     end_date = models.DateField(null=True, blank=True)
+
+    def clean(self):
+        super().clean()
+        if self.start_date > timezone.now().date():
+            raise ValidationError("Start date cannot be in the future.")
+        
+    def save(self, *args, **kwargs):
+        self.clean()  # Run full validation before saving
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
