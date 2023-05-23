@@ -74,16 +74,23 @@ class EmergencyContactAPIView(mixins.CreateModelMixin,
     serializer_class = EmergencyContactSerializer
     queryset = EmergencyContact.objects.all()
 
-
-class UserEmergencyContactAPIView(viewsets.ModelViewSet):
+class UserEmergencyContactrViewset(mixins.CreateModelMixin,
+                                    mixins.RetrieveModelMixin,
+                                    mixins.UpdateModelMixin,
+                                    mixins.ListModelMixin,
+                                    GenericViewSet):
     '''user can list create retrive and update and destroy users/emergency contacts'''
     serializer_class = EmergencyContactSerializer
-    queryset = EmergencyContact.objects.all()
+    # queryset = EmergencyContact.objects.all()
+    lookup_field = 'patient'
 
-    def get_queryset(self):
-        # print(self.kwargs['users'],'***********************************')
-        # user_id = self.kwargs['']
-        return EmergencyContact.objects.filter(id=2)
+    def get_queryset(self, *args, **kwargs):
+
+        user_id = self.kwargs['users_id']
+        print(user_id, '$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
+        emer_conn = User.objects.get(user=self.kwargs['users_id'])
+        print(emer_conn, '$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
+        return EmergencyContact.objects.filter(patient=emer_conn)
 
 class DiseaseViewSet(mixins.CreateModelMixin,
                     mixins.UpdateModelMixin,
