@@ -3,6 +3,7 @@ from rest_framework.status import HTTP_201_CREATED
 from rest_framework.permissions import AllowAny
 
 from rest_framework.views import APIView
+from django.core.mail import send_mail
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import AuthenticationFailed
@@ -13,9 +14,11 @@ from django.db.models import Count
 from django.shortcuts import get_object_or_404
 from django.http import QueryDict
 from django.utils import timesince, timezone
-from .models import User, EmergencyContact, Disease, Article, Doctor, Payment, Membership, UserProfile
+from .models import User, EmergencyContact, Disease, Article, Doctor, Payment, Membership, \
+                    UserProfile, HealthAssessmentSection, Medication
 from .serializers import UserSerializer, DiseaseSerializer, ArticleSerializer,\
-                        EmergencyContactSerializer, DoctorsSerializer, PaymentSerializer, UserProfileSerializer
+                        EmergencyContactSerializer, DoctorsSerializer, PaymentSerializer, \
+                        UserProfileSerializer, HealthAssessmentSectionSerializer, MedicationSerializer
 
 class UserAPIView(mixins.CreateModelMixin,
                        mixins.RetrieveModelMixin,
@@ -78,9 +81,9 @@ class UserEmergencyContactAPIView(viewsets.ModelViewSet):
     queryset = EmergencyContact.objects.all()
 
     def get_queryset(self):
-        print(self.kwargs['user_id'],'***********************************')
-        user_id = self.kwargs['user_id']
-        return EmergencyContact.objects.filter(user_id=user_id)
+        # print(self.kwargs['users'],'***********************************')
+        # user_id = self.kwargs['']
+        return EmergencyContact.objects.filter(id=2)
 
 class DiseaseViewSet(mixins.CreateModelMixin,
                     mixins.UpdateModelMixin,
@@ -138,3 +141,30 @@ class PaymentCreateView(generics.CreateAPIView):
         serializer.instance.is_paid = True
         serializer.instance.save()
         return Response(serializer.data, status=HTTP_201_CREATED)
+
+
+class HealthAssessmentSectionViewSet(viewsets.ModelViewSet):
+    queryset = HealthAssessmentSection.objects.all()
+    serializer_class = HealthAssessmentSectionSerializer
+
+
+class MedicationViewSet(viewsets.ModelViewSet):
+    serializer_class = MedicationSerializer
+    queryset = Medication.objects.all()
+
+    def perform_create(self, serializer):
+        medication = serializer.save()
+
+        # Send medication reminder email
+        subject = 'Medication Reminder'
+        message = f"Don't forget to take your medication: {medication.name}"
+        send_mail(subject, message, 'spyxmeni@gmail.com', [self.request.user.email])
+
+    def perform_update(self, serializer):
+        medication = serializer.save()
+
+        # Check if medication is ongoing and send reminder if needed
+        if medication.start_date <= timezone.now().date() and (medication.end_date is None or medication.end_date >= timezone.now().date()):
+            subject = 'Medication Reminder'
+            message = f"Don't forget to take your medication: {medication.name}"
+            send_mail(subject, message, 'spyxmeni@gmail.com', [self.request.user.email])
