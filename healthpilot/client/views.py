@@ -1,5 +1,4 @@
 from rest_framework.response import Response
-from rest_framework.status import HTTP_201_CREATED
 from rest_framework.permissions import AllowAny
 
 from rest_framework.views import APIView
@@ -10,8 +9,6 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework import generics, mixins, status, viewsets
 
 import logging
-from django.db.models import Count
-from django.shortcuts import get_object_or_404
 from django.http import QueryDict
 from django.utils import timesince, timezone
 from .models import User, EmergencyContact, Disease, Article, Doctor, Payment, Membership, \
@@ -61,6 +58,9 @@ class ArticleAPIView(mixins.CreateModelMixin,
                        mixins.RetrieveModelMixin,
                        mixins.ListModelMixin,
                        GenericViewSet):
+    '''Article to view and retrive including the rss feed which come 
+        from other places/platform ------> we may crawel articles'''
+
     serializer_class = ArticleSerializer
     queryset = Article.objects.all()
 
@@ -71,10 +71,11 @@ class EmergencyContactAPIView(mixins.CreateModelMixin,
                        mixins.DestroyModelMixin,
                        GenericViewSet):
     '''user can list create retrive and update and destroy emergency contacts'''
+
     serializer_class = EmergencyContactSerializer
     queryset = EmergencyContact.objects.all()
 
-class UserEmergencyContactrViewset(mixins.CreateModelMixin,
+class UserEmergencyContactViewset(mixins.CreateModelMixin,
                                     mixins.RetrieveModelMixin,
                                     mixins.UpdateModelMixin,
                                     mixins.ListModelMixin,
@@ -147,7 +148,7 @@ class PaymentCreateView(generics.CreateAPIView):
         serializer.save(user=self.request.user)
         serializer.instance.is_paid = True
         serializer.instance.save()
-        return Response(serializer.data, status=HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 class HealthAssessmentSectionViewSet(viewsets.ModelViewSet):
@@ -175,3 +176,20 @@ class MedicationViewSet(viewsets.ModelViewSet):
             subject = 'Medication Reminder'
             message = f"Don't forget to take your medication: {medication.name}"
             send_mail(subject, message, 'spyxmeni@gmail.com', [self.request.user.email])
+
+
+# class RateReviewView(View):
+#     def post(self, request, consultation_id):
+#         consultation_obj = consultation.objects.get(id=consultation_id)
+#         patient = consultation_obj.patient
+#         doctor1 = consultation_obj.doctor
+#         rating = request.POST.get('rating')
+#         review = request.POST.get('review')
+
+#         rating_obj = rating_review(patient=patient, doctor=doctor1, rating=rating, review=review)
+#         rating_obj.save()
+
+#         rate = int(rating_obj.rating_is)
+#         doctor.objects.filter(pk=doctor1).update(rating=rate)
+
+#         return redirect('consultationview', consultation_id)
