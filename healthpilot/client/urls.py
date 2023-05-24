@@ -11,8 +11,8 @@ router.register('article', ArticleAPIView, basename='articles') #TODO some error
 router.register('emergency_contact', EmergencyContactAPIView, basename='emergency_contact')
 router.register('users/(?P<users_id>[^/.]+)/users_emergency', UserEmergencyContactViewset, basename='user_emergency_contact')
 router.register('doctors', DoctorViewSet, basename='doctors')
-router.register(r'health_assessment_sections', HealthAssessmentSectionViewSet, basename='user_health_assessment')
-router.register(r'medications', MedicationViewSet, basename='medications' )
+router.register('health_assessment_sections', HealthAssessmentSectionViewSet, basename='user_health_assessment')
+router.register('medications', MedicationViewSet, basename='medications' )
 
 # emergency_contact_router = NestedDefaultRouter(router, 'users', lookup='users')
 # emergency_contact_router.register('users_emergency', UserEmergencyContactrViewset, basename='user_emergency_contact')
