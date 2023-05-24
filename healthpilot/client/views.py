@@ -87,11 +87,33 @@ class UserEmergencyContactViewset(mixins.CreateModelMixin,
 
     def get_queryset(self, *args, **kwargs):
 
-        user_id = self.kwargs['users_id']
-        print(user_id, '$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
-        emer_conn = User.objects.get(user=self.kwargs['users_id'])
-        print(emer_conn, '$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
-        return EmergencyContact.objects.filter(patient=emer_conn)
+        try:
+            user = User.objects.get(id=self.kwargs['users_id'])
+        except User.DoesNotExist:
+            # print('User Does Not Exist')
+            return User.objects.none()
+            # return Response(f'User {user_id} Does Not Exist', 
+            #                  status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            EmergencyContact.objects.filter(
+                                patient=user).order_by('-created_at')
+        
+        except EmergencyContact.DoesNotExist:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        
+        # user_id = self.kwargs['users_id']
+        # print(user_id, '$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
+        # emer_conn = User.objects.get(user=self.kwargs['users_id'])
+        # print(emer_conn, '$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
+        # return EmergencyContact.objects.filter(patient=emer_conn)
+
+
+        # user_id = self.kwargs['users_id']
+        # print(user_id, '$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
+        # emer_conn = User.objects.get(user=self.kwargs['users_id'])
+        # print(emer_conn, '$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
+        # return EmergencyContact.objects.filter(patient=emer_conn)
 
 class DiseaseViewSet(mixins.CreateModelMixin,
                     mixins.UpdateModelMixin,
