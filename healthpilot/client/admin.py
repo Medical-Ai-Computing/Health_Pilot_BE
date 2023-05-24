@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import User, EmergencyContact, Disease, Tag, Category, Article, Medication, \
-                    Doctor, Membership, Payment, UserProfile, HealthAssessmentSection
+                    Doctor, Membership, Payment, UserProfile, HealthAssessmentSection  # Rating_Review
 
 admin.site.site_header = "Health Pilot ADMIN"
 admin.site.site_title = "Health Pilot Admin Portal"
@@ -56,3 +56,7 @@ class HealthAssessmentSectionAdmin(admin.ModelAdmin):
 @admin.register(Medication)
 class MedicationAdmin(admin.ModelAdmin):
     list_display = [field.name for field in Medication._meta.fields]
+
+# @admin.register(Rating_Review)
+# class RatingAdmin(admin.ModelAdmin):
+#     list_display = [field.name for field in Rating_Review._meta.fields]

@@ -8,7 +8,7 @@ from django.contrib.postgres.fields import ArrayField
 from datetime import date
 
 class User(AbstractUser):
-    user = models.IntegerField()
+    # user = models.IntegerField()
     username=models.CharField(max_length=50, null=True, blank=True)
     full_name=models.CharField(max_length=50)
 
@@ -73,7 +73,6 @@ class EmergencyContact(models.Model):
                     ('CHILD', 'Child'),
                     ('FRIEND', 'Friend'),
                     ('SPOUSE', 'Spouse'),
-                    ('PARTNER', 'Parent'),
                     ('ASSISTANT', 'Assistant'),
                     ('MANAGER', 'Manager'),
                     ('ROOMMATE', 'Roommate'),
@@ -294,3 +293,56 @@ class Medication(models.Model):
 
     def __str__(self):
         return self.name
+    
+
+
+# the blow code is for future and premium users
+# class Doctor(models.Model):
+#     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+#     full_name = models.CharField(max_length=100)
+#     date_of_birth = models.DateField()
+#     joined_at=models.DateTimeField(auto_now_add=True)
+#     deleted_at=models.DateTimeField(null=True, blank=True)
+
+#     CHOICES = [('M', 'Male'), ('F', 'Female'), ('O', 'Other')]
+
+#     gender = models.CharField(choices=CHOICES, max_length=15, null=True, blank=True)
+#     email = models.EmailField(blank=True, null=True)
+#     address = models.CharField(max_length = 250, blank=True, null=True)
+#     mobile_no = models.CharField(max_length = 15, blank=True, null=True)
+#     country = CountryField(blank=True, null=True, blank_label="(Select country)")
+
+#     # doctor rating by users
+#     # rating = models.IntegerField(default=0)
+
+# class Consultation(models.Model):
+#     '''a class for premium users to have and consult doctors'''
+
+#     patient = models.ForeignKey(User ,null=True, on_delete=models.SET_NULL)
+#     doctor = models.ForeignKey(Doctor ,null=True, on_delete=models.SET_NULL)
+#     disease = models.OneToOneField(Disease, null=True, on_delete=models.SET_NULL)
+#     consultation_date = models.DateField()
+#     status = models.CharField(max_length = 20)
+
+# class Rating_Review(models.Model):
+#     '''class for the doctors rating to appear in his
+#        profile so that user can choise a good doctors'''
+    
+#     patient = models.ForeignKey(User ,null=True, on_delete=models.SET_NULL)
+    # doctor = models.ForeignKey(Doctor ,null=True, on_delete=models.SET_NULL)
+    
+    # rating = models.IntegerField(default=0)
+    # review = models.TextField(blank=True) 
+
+
+    # @property
+    # def rating_is(self):
+    #     new_rating = 0
+    #     rating_obj = Rating_Review.objects.filter(doctor=self.doctor)
+    #     for i in rating_obj:
+    #         new_rating += i.rating
+       
+    #     new_rating = new_rating/len(rating_obj)
+    #     new_rating = int(new_rating)
+        
+    #     return new_rating
