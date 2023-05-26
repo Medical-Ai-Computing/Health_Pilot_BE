@@ -1,0 +1,48 @@
+version: "3.0"
+services:
+  db:
+    image: postgres:14.1-alpine
+    restart: always
+    networks:
+      - health-net
+    volumes:
+      - ./data/db:/var/lib/postgresql/data
+    env_file:
+      - ".env_file"
+  healthpilot:
+    build: .
+    volumes:
+      - .:/healthpilot
+      - dem:/etc/systemd/system:rw
+      - static:/static
+    command: >
+      bash -c
+        "python manage.py migrate --no-input &&
+         python manage.py collectstatic  --no-input &&
+         daphne -b 0.0.0.0 -p 8000 healthpilot.asgi:application"
+
+    expose:
+      - 8000
+
+    networks:
+      - health-net
+    depends_on:
+      - db
+  nginx:
+    build: ./nginx
+    volumes:
+      - static:/static
+    networks:
+      - health-net
+    ports:
+      - "8000:80"
+
+    depends_on:
+      - healthpilot
+volumes:
+  static:
+  dem: null
+
+networks:
+  health-net:
+    driver: bridge
