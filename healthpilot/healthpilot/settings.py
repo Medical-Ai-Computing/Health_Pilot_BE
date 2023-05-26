@@ -5,12 +5,11 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-%#dj!@wrqjelzr*uo#75d13rw&6x92o=$v6qx4ol5#dl5uj^!3'
+SECRET_KEY = "django-insecure-%#dj!@wrqjelzr*uo#75d13rw&6x92o=$v6qx4ol5#dl5uj^!3"
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
-# Application definition
+ALLOWED_HOSTS = ['*']
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8000']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -22,9 +21,10 @@ INSTALLED_APPS = [
     # "rest_framework_api_key",
     'rest_framework',
     'client.apps.ClientConfig',
+    # 'chat.apps.ChatConfig',
      # since rest_framework_swagger is depricated(https://github.com/marcgibbons/django-rest-swagger),
     'drf_yasg',
-    # 'django-countries'
+    'django_countries',
 ]
 
 MIDDLEWARE = [
@@ -60,11 +60,11 @@ WSGI_APPLICATION = 'healthpilot.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.environ.get('DB_NAME', 'healthpilot'),
-        'USER': os.environ.get('DB_USER', 'mila'),
+        'USER': os.environ.get('DB_USER', 'mark'),
         'PASSWORD': os.environ.get('DB_PASS', '1Amynameiso**'),
-        'HOST': os.environ.get('DB_HOST', 'localhost'),
+        'HOST': os.environ.get('DB_HOST', 'db'),
         'PORT': 5432,
         'DISABLE_SERVER_SIDE_CURSORS': True,
     }
@@ -96,6 +96,10 @@ USE_L10N = True
 
 USE_TZ = True
 
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/3.2/howto/static-files/
+STATIC_ROOT = '/static'
+# STATIC_ROOT = BASE_DIR / "staticfiles"
 STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -105,3 +109,5 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     'PAGE_SIZE': 50,
 }
+
+AUTH_USER_MODEL= "client.User"
