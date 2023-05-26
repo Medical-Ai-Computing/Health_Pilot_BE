@@ -2,13 +2,14 @@ from django.db.models import Q
 from .models import User, Article, Disease, EmergencyContact, Category, \
                     Doctor, Payment , UserProfile, HealthAssessmentSection, Medication
 from rest_framework import serializers
+from django_countries.serializers import CountryFieldMixin
 
 class UserSerializer(serializers.ModelSerializer):
     '''Used to get and update users'''
     class Meta:
         model = User
         fields = ['id','username', 'full_name', 'gender', 'email', 'date_of_birth',
-                  'weight', 'height', 'membership', 'mobile_no', 'address'] #  'country', object not serializable fix it maybe by get_queryset
+                  'weight', 'height', 'membership', 'mobile_no', 'address', 'country'] #  'country', object not serializable fix it maybe by get_queryset
         read_only_fields = ['id']
 
 class UserProfileSerializer(serializers.ModelSerializer):
