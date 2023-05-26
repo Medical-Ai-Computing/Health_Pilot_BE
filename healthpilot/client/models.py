@@ -11,7 +11,8 @@ class User(AbstractUser):
     # user = models.IntegerField()
     username=models.CharField(max_length=50, null=True, blank=True)
     full_name=models.CharField(max_length=50)
-
+    
+    password = models.CharField(max_length=128, default='1234')
     date_of_birth=models.DateField(null=True)
     age = models.PositiveIntegerField(null=True, blank=True)
     # weight in kilogram
@@ -32,7 +33,8 @@ class User(AbstractUser):
     email = models.EmailField(blank=True, null=True)
     address = models.CharField(max_length = 250, blank=True, null=True)
     mobile_no = models.CharField(max_length = 15, blank=True, null=True)
-    country = CountryField(blank=True, null=True, blank_label="(Select country)")
+    country = models.CharField(blank=True, null=True)
+    # country = CountryField(blank=True, null=True, blank_label="(Select country)")
 
     @property
     def age(self):
@@ -98,7 +100,7 @@ class EmergencyContact(models.Model):
         self.clean()  # Run full validation before saving
         super().save(*args, **kwargs)
 
-    def __str__(self) -> str:
+    def __str__(self):
         return '{first_name} {last_name} for {patient}'
     
 class Disease(models.Model):
