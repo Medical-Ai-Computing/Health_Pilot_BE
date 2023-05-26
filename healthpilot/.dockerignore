@@ -1,0 +1,19 @@
+#caches
+*/__pycache__/*
+__pycache__/
+#venv
+xrep_api
+#dev db
+*.sqlite3
+
+venv/
+try.py
+
+data/
+dat/
+celerydata/
+*.log
+launch.sh
+.vscode
+.pytest_cache
+celerybeat-schedule
