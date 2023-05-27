@@ -18,13 +18,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # "rest_framework_api_key",
     'rest_framework',
     'client.apps.ClientConfig',
-    # 'chat.apps.ChatConfig',
-     # since rest_framework_swagger is depricated(https://github.com/marcgibbons/django-rest-swagger),
+    'chat.apps.ChatConfig',
     'drf_yasg',
     'django_countries',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -55,8 +54,14 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'healthpilot.wsgi.application'
+# WSGI_APPLICATION = 'healthpilot.wsgi.application'
+ASGI_APPLICATION = 'healthpilot.wsgi.application'
 
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
 
 DATABASES = {
     'default': {
