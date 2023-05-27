@@ -39,6 +39,18 @@ services:
 
     depends_on:
       - healthpilot
+  # daphne:
+  #   build: ./daphne
+  #     context: .
+  #   command: daphne healthpilot.asgi:application --port 8000
+  #   expose:
+  #     - 8000
+  #   depends_on:
+  #     - db
+  #   volumes:
+  #     - static:/static
+  #   networks:
+  #     - health-net
 volumes:
   static:
   dem: null
