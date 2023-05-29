@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from channels.layers import get_channel_layer
-from asgiref.sync import async_to_sync
+
 
 from .models import PrivateChat, GroupChat, Message
 from .serializers import PrivateChatSerializer, GroupChatSerializer, MessageSerializer

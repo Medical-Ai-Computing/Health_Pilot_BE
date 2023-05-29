@@ -91,7 +91,7 @@ class EmergencyContact(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
 
     def clean(self):
-        # Check if the user already has two emergency contacts
+        # Check if the user already has three emergency contacts
         existing_contacts = EmergencyContact.objects.filter(patient=self.patient)
         if existing_contacts.count() >= 3:
             raise ValidationError("A user can have only two emergency contacts.")
