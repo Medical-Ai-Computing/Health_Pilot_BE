@@ -39,6 +39,7 @@ services:
 
     depends_on:
       - healthpilot
+  # newly added server
   daphne:
     build: .
     command: daphne -b 0.0.0.0 -p 8000 healthpilot.asgi:application
