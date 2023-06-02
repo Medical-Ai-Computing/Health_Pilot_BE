@@ -9,16 +9,19 @@ services:
       - ./data/db:/var/lib/postgresql/data
     env_file:
       - ".env_file"
+
   healthpilot:
     build: .
+    restart: always
     volumes:
       - .:/healthpilot
       - dem:/etc/systemd/system:rw
       - static:/static
     command: >
       bash -c
-        "python manage.py migrate --no-input &&
-         python manage.py collectstatic  --no-input &&
+        "python manage.py makemigrations --no-input && \
+         python manage.py migrate --no-input && \
+         python manage.py collectstatic  --no-input && \
          daphne -b 0.0.0.0 -p 8000 healthpilot.asgi:application"
 
     expose:
