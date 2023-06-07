@@ -25,11 +25,11 @@ class GroupChatSerializer(serializers.ModelSerializer):
 class ChatbotMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ChatbotMessage
-        fields = ('sender', 'content', 'timestamp')
+        fields = ('sender', 'context', 'timestamp', 'conversation')
 
 class ConversationSerializer(serializers.ModelSerializer):
-    messages = MessageSerializer(many=True, read_only=True)
+    messages = ChatbotMessageSerializer(many=True, read_only=True)
 
     class Meta:
         model = Conversation
-        fields = ('user', 'timestamp', 'messages')
+        fields = ('user', 'messages', 'timestamp')
