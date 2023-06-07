@@ -8,10 +8,10 @@ websocket_urlpatterns = [
 ]
 
 router = routers.DefaultRouter()
-router.register(r'conversations', ConversationViewSet)
+router.register('conversations', ConversationViewSet)
 
 conversation_router = routers.NestedDefaultRouter(router, r'conversations', lookup='conversation')
-conversation_router.register(r'messages', ChatbotMessageViewSet, basename='conversation-messages')
+conversation_router.register('chatbotmessages', ChatbotMessageViewSet, basename='conversation-messages')
 
 
 
