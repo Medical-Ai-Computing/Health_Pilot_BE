@@ -180,6 +180,8 @@ class Article(models.Model):
     categories = models.ManyToManyField(
         Category, related_name='articles',  blank=True)
     tags = models.ManyToManyField(Tag, related_name='articles', blank=True)
+    link = models.CharField(max_length=250, blank=True)
+    headline = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
