@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import PrivateChat, GroupChat, Message
+from .models import PrivateChat, GroupChat, Message, Conversation, ChatbotMessage
 
 class MessageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -19,3 +19,17 @@ class GroupChatSerializer(serializers.ModelSerializer):
     class Meta:
         model = GroupChat
         fields = ['name', 'participants']
+
+
+# Chatbot serializer
+class ChatbotMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ChatbotMessage
+        fields = ('sender', 'content', 'timestamp')
+
+class ConversationSerializer(serializers.ModelSerializer):
+    messages = MessageSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Conversation
+        fields = ('user', 'timestamp', 'messages')

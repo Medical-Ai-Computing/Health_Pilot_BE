@@ -1,10 +1,11 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from channels.layers import get_channel_layer
+from django.shortcuts import get_object_or_404
 
-
-from .models import PrivateChat, GroupChat, Message
-from .serializers import PrivateChatSerializer, GroupChatSerializer, MessageSerializer
+from .models import PrivateChat, GroupChat, Message, Conversation, ChatbotMessage
+from .serializers import PrivateChatSerializer, GroupChatSerializer, MessageSerializer, \
+                         ConversationSerializer, ChatbotMessageSerializer
 
 class PrivateChatView(APIView):
     def post(self, request):
@@ -38,3 +39,14 @@ class MessageView(APIView):
             )
             return Response(MessageSerializer(message).data)
         return Response(serializer.errors, status=400)
+
+# Chatbot Conversation
+from rest_framework import viewsets
+
+class ConversationViewSet(viewsets.ModelViewSet):
+    queryset = Conversation.objects.all()
+    serializer_class = ConversationSerializer
+
+class ChatbotMessageViewSet(viewsets.ModelViewSet):
+    queryset = ChatbotMessage.objects.all()
+    serializer_class = ChatbotMessageSerializer
