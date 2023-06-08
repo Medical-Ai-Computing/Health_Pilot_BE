@@ -155,9 +155,33 @@ class PaymentCreateView(generics.CreateAPIView):
 
 
 class HealthAssessmentSectionViewSet(viewsets.ModelViewSet):
-    queryset = HealthAssessmentSection.objects.all()
+    #TODO only get_queryset and retrive function by user_id
     serializer_class = HealthAssessmentSectionSerializer
 
+    def get_queryset(self):
+        user_id = self.request.query_params.get('user_id')
+        queryset = HealthAssessmentSection.objects.filter(delete_health_profiles_option=False)
+        if user_id:
+            queryset = queryset.filter(user_id=user_id)
+        queryset = queryset.order_by('-created_at')
+        return queryset # TODO add exception if user does not exist
+    
+    def retrieve(self, request, *args, **kwargs):
+        # to access this endpoint pass /?user_id=<id>
+        try:
+            self.user = User.objects.get(id=kwargs['pk'], 
+                                         deleted_at=None)
+        except User.DoesNotExist:
+            return Response("User Does Not Exist.", 
+                            status=status.HTTP_400_BAD_REQUEST)
+        try:
+            instance = HealthAssessmentSection.objects.filter(user=self.user ,
+                                                              delete_health_profiles_option=False)
+        except HealthAssessmentSection.DoesNotExist:
+            return Response('Health History not recorded in the system. please have one health history', 
+                            status=status.HTTP_400_BAD_REQUEST)
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
 
 class MedicationViewSet(viewsets.ModelViewSet):
     serializer_class = MedicationSerializer
