@@ -267,8 +267,9 @@ class AdditionalFeatures(models.Model):
 
 class HealthAssessmentSection(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    health_tracking_history = models.TextField()
-    recommended_history = models.TextField()
+    health_tracking_history = models.TextField(default='')
+    symptom_history = models.TextField(null=False, default='')
+    recommended_history = models.TextField(null=False)
     delete_health_profiles_option = models.BooleanField(default=False)
     created_at = models.DateTimeField(default=timezone.now)
 
