@@ -80,7 +80,7 @@ class PaymentSerializer(serializers.ModelSerializer):
 class HealthAssessmentSectionSerializer(serializers.ModelSerializer):
     class Meta:
         model = HealthAssessmentSection
-        fields = '__all__'
+        fields = ['user', 'health_tracking_history', 'symptom_history', 'recommended_history', 'created_at']
 
 class MedicationSerializer(serializers.ModelSerializer):
     class Meta:
