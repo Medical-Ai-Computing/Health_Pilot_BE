@@ -7,12 +7,11 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.postgres.fields import ArrayField
 from datetime import date
 
-class User(AbstractUser):
-    # user = models.IntegerField()
+class User(models.Model):
     username=models.CharField(max_length=50, null=True, blank=True)
     full_name=models.CharField(max_length=50)
     
-    password = models.CharField(max_length=128, default='1234')
+    # password = models.CharField(max_length=128, default='1234')
     date_of_birth=models.DateField(null=True)
     age = models.PositiveIntegerField(null=True, blank=True)
     # weight in kilogram
@@ -58,7 +57,8 @@ class User(AbstractUser):
 class UserProfile(models.Model):
     '''user profile about me section'''
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
-    about_me = models.CharField(max_length=255 ,blank=True)
+    about_me = models.CharField(max_length=255 ,blank=True, default='')
+    created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return f'{self.user} about me'
@@ -131,13 +131,13 @@ class Disease(models.Model):
     updated_at = models.DateTimeField(default=timezone.now)
     # basic question with choices fileds
     blood_type = models.CharField(max_length=11, choices=BLOOD_TYPE_CHOICES, null=True, default='DK')
-    blood_pressure = models.CharField(max_length=2, choices=CHOICES,  default='N')
+    blood_pressure = models.CharField(max_length=2, choices=CHOICES,  default='')
     chronic_condition = models.CharField(max_length=2, choices=CHOICES, default='N')
     smoke = models.CharField(max_length=2, choices=CHOICES, default='N')
     alcohol = models.CharField(max_length=2, choices=CHOICES, default='N')
     recent_surgeries = models.CharField(max_length=2, choices=CHOICES, default='N')
     infectious_diseases = models.CharField(max_length=2, choices=CHOICES, default='N')
-    #TODO i want to ask the user pregenancy based on gender type
+    #TODO i want to ask the user pregenancy based on gender type, and Default value to NO
     is_pregnant = models.CharField(max_length=2, choices=CHOICES, default='N')
 
     def save(self, *args, **kwargs):
@@ -175,7 +175,7 @@ class Article(models.Model):
     '''Article including the rss feed which come 
     from other places/platform ------> we may crawel articles'''
 
-    article_id=models.IntegerField()
+    # article_id=models.IntegerField(unique=True) # article id must be unique
     author = models.CharField(max_length=250)
     categories = models.ManyToManyField(
         Category, related_name='articles',  blank=True)
@@ -186,9 +186,9 @@ class Article(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return str(self.article_id)
+        return str(self.id)
     
-class Doctor(models.Model):
+class PatientDoctor(models.Model):
     '''used to send the health report of users to selected doctors
     and this is the doctor contact information'''
 
