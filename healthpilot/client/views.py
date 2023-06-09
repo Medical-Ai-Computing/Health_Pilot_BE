@@ -9,12 +9,13 @@ from rest_framework.exceptions import AuthenticationFailed
 from rest_framework import generics, mixins, status, viewsets
 
 import logging
+from django.http import Http404
 from django.http import QueryDict
 from django.utils import timesince, timezone
-from .models import User, EmergencyContact, Disease, Article, Doctor, Payment, Membership, \
+from .models import User, EmergencyContact, Disease, Article, PatientDoctor, Payment, Membership, \
                     UserProfile, HealthAssessmentSection, Medication
 from .serializers import UserSerializer, DiseaseSerializer, ArticleSerializer,\
-                        EmergencyContactSerializer, DoctorsSerializer, PaymentSerializer, \
+                        EmergencyContactSerializer, PatientDoctorSerializer, PaymentSerializer, \
                         UserProfileSerializer, HealthAssessmentSectionSerializer, MedicationSerializer
 
 class UserAPIView(mixins.CreateModelMixin,
@@ -26,31 +27,26 @@ class UserAPIView(mixins.CreateModelMixin,
     serializer_class = UserSerializer
     queryset = User.objects.all()
 
-class UserProfileView(generics.RetrieveUpdateAPIView):
-    '''Api View for users About Me section to Get, Post and Put request'''
-    queryset = UserProfile.objects.all()
+class UserProfileViewSet(viewsets.ModelViewSet):
+    '''LIST, RETRIVE and PUT method'''
     serializer_class = UserProfileSerializer
 
-    def get_object(self):
-        if not self.request.user.is_authenticated:
-            print('AuthenticationFailed usersssssss')
-            raise AuthenticationFailed()
-        
-        user = self.request.user
-        print(user, type(self.request.user), 'about me section---------------------')
+    def get_queryset(self):
+        return UserProfile.objects.all().order_by('-created_at')
+     
+    def retrieve(self, request, *args, **kwargs):
         try:
-            return UserProfile.objects.get(user=user)
+            self.user = User.objects.get(id=kwargs['pk'], 
+                                         deleted_at=None)
+        except User.DoesNotExist:
+            return Response("User Does Not Exist.", 
+                            status=status.HTTP_400_BAD_REQUEST)
+        try:
+            instance = UserProfile.objects.get(user=self.user)
         except UserProfile.DoesNotExist:
-            print('user not found andddddddddddddddddddddd')
-            # Create a new UserProfile object for the user if one doesn't exist
-            return UserProfile.objects.create(user=user)
-
-    def update(self, request, *args, **kwargs):
-        print('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~update~~~~')
-        instance = self.get_object()
-        serializer = self.get_serializer(instance, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
+            return Response('Public Profile not recorded in the system. please have one', 
+                            status=status.HTTP_400_BAD_REQUEST)
+        serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
 
@@ -75,14 +71,12 @@ class EmergencyContactAPIView(mixins.CreateModelMixin,
     serializer_class = EmergencyContactSerializer
     queryset = EmergencyContact.objects.all()
 
-class UserEmergencyContactViewset(mixins.CreateModelMixin,
-                                    mixins.RetrieveModelMixin,
-                                    mixins.UpdateModelMixin,
+class UserEmergencyContactViewset(mixins.RetrieveModelMixin,
                                     mixins.ListModelMixin,
                                     GenericViewSet):
-    '''user can list create retrive and update and destroy users/emergency contacts'''
+    '''user can list retrive users/emergency contacts'''
     serializer_class = EmergencyContactSerializer
-    # queryset = EmergencyContact.objects.all()
+
     lookup_field = 'patient'
 
     def get_queryset(self, *args, **kwargs):
@@ -92,8 +86,7 @@ class UserEmergencyContactViewset(mixins.CreateModelMixin,
             emer_conn = User.objects.get(id=user_id)
             return EmergencyContact.objects.filter(patient=emer_conn).order_by('-created_at')
         except User.DoesNotExist:
-            # object of type 'Response' has no len() error will occure if user not found
-            return Response('User Not Found')
+            raise Http404("User Not Found")
         
 
 class DiseaseViewSet(mixins.CreateModelMixin,
@@ -102,26 +95,42 @@ class DiseaseViewSet(mixins.CreateModelMixin,
                     mixins.ListModelMixin,
                     GenericViewSet):
     serializer_class = DiseaseSerializer
-    queryset = Disease.objects.all()
+    queryset = Disease.objects.all() #TODO  for some reason the data is not being saved
 
 
-class DoctorViewSet(mixins.CreateModelMixin,
+class UserDoctorViewSet(mixins.CreateModelMixin,
                   mixins.RetrieveModelMixin,
                   mixins.UpdateModelMixin,
                   mixins.ListModelMixin,
                   mixins.DestroyModelMixin,
-                  GenericViewSet):
-    ''' api view method for doctors
+                  GenericViewSet): #TODO filter docktors for specific users like User_emergency
+    ''' api view method for User personal doctors to send datas
     1. Create Doctors
     2. List doctors
     3. Retrive doctors
     4. Update
     5. Remove Doctors'''
 
-    serializer_class = DoctorsSerializer
-    queryset = Doctor.objects.all()
+    serializer_class = PatientDoctorSerializer
+    queryset = PatientDoctor.objects.all()
 
-class PaymentCreateView(generics.CreateAPIView):
+class SingleUserDoctorViewset(mixins.RetrieveModelMixin,
+                                mixins.ListModelMixin,
+                                GenericViewSet):
+    '''User Personal docktor api view method for Paitent to send datas'''
+    serializer_class = PatientDoctorSerializer
+    lookup_field = 'patient'
+
+    def get_queryset(self, *args, **kwargs):
+        user_id = self.kwargs['users_id']
+        
+        try:
+            emer_conn = User.objects.get(id=user_id)
+            return PatientDoctor.objects.filter(patient=emer_conn).order_by('-created_at')
+        except User.DoesNotExist:
+            raise Http404("User Not Found")
+
+class PaymentCreateView(generics.CreateAPIView): # TODO improvmentas
     '''used to process the payment'''
     # permission_classes = [IsAuthenticated] # authenticated users can have editable forms
     serializer_class = PaymentSerializer
@@ -129,14 +138,14 @@ class PaymentCreateView(generics.CreateAPIView):
     def post(self, request, *args, **kwargs):
         print('before request data', request.data['user'], request.data)
         # membership_type = request.user.membership.membership_type
-        membership_type = User.objects.get(id=request.data['user']).membership
+        user_id = request.data['user']
+        membership_type = User.objects.get(id=user_id).membership
 
         if membership_type == 'F':
             # request.user.membership.membership_type = 'premium'
             # request.user.membership.save()
             print('---------- membership type is Free----------')
 
-            user_id = request.data['user']
             print(user_id, 'user--id--id')
             membership = Membership() # user.membership
             membership.activate_premium_membership()
@@ -155,7 +164,9 @@ class PaymentCreateView(generics.CreateAPIView):
 
 
 class HealthAssessmentSectionViewSet(viewsets.ModelViewSet):
-    #TODO only get_queryset and retrive function by user_id
+    '''only list and retrive user health history.
+       user can not delete history so that 
+       there is no delete opition and update opition'''
     serializer_class = HealthAssessmentSectionSerializer
 
     def get_queryset(self):
@@ -185,7 +196,7 @@ class HealthAssessmentSectionViewSet(viewsets.ModelViewSet):
 
 class MedicationViewSet(viewsets.ModelViewSet):
     serializer_class = MedicationSerializer
-    queryset = Medication.objects.all()
+    queryset = Medication.objects.all() #TODO minor improvement and email/notification reminder
 
     def perform_create(self, serializer):
         medication = serializer.save()
