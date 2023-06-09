@@ -1,6 +1,6 @@
 from django.db.models import Q
 from .models import User, Article, Disease, EmergencyContact, Category, \
-                    Doctor, Payment , UserProfile, HealthAssessmentSection, Medication
+                    PatientDoctor, Payment , UserProfile, HealthAssessmentSection, Medication
 from rest_framework import serializers
 from django_countries.serializers import CountryFieldMixin
 
@@ -47,16 +47,7 @@ class ArticleSerializer(serializers.ModelSerializer):
     '''get article and post from craweld data or create a new'''
     class Meta:
         model = Article
-        fields = ['article_id', 'author', 'categories', 'tags', 'created_at', 'updated_at']
-    def validate(self, attrs):
-        pass
-        # return super().validate(attrs)
-
-    # def get_categories(self, obj):
-    # '''obj is an agent instance.'''
-
-    #     qset = Category.objects.filter(name=obj)
-    #     return [CategorySerializer(m).data for m in qset]
+        fields = ['id','author', 'categories', 'tags', 'headline', 'link', 'updated_at']
 
 class DiseaseSerializer(serializers.ModelSerializer):
     '''serialize Disease of users'''
@@ -66,21 +57,21 @@ class DiseaseSerializer(serializers.ModelSerializer):
                   'confidence', 'consultdoctor', 'allargis', 'blood_type', 'blood_pressure',
                    'chronic_condition', 'smoke', 'alcohol', 'recent_surgeries', 'infectious_diseases', 'is_pregnant' ]
 
-class DoctorsSerializer(serializers.ModelSerializer):
+class PatientDoctorSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Doctor
+        model = PatientDoctor
         fields = ['doctor_name', 'doctor_type', 'email', 'cell_phone', 'patient']
         
 # payment serializers
 class PaymentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
-        fields = ['id', 'user', 'payment_date', 'amount', 'payment_method', 'is_paid']
+        fields = ['id', 'user', 'payment_date', 'amount', 'payment_method']
     
 class HealthAssessmentSectionSerializer(serializers.ModelSerializer):
     class Meta:
         model = HealthAssessmentSection
-        fields = ['user', 'health_tracking_history', 'symptom_history', 'recommended_history', 'created_at']
+        fields = ['user', 'health_tracking_history', 'symptom_history', 'recommended_history']
 
 class MedicationSerializer(serializers.ModelSerializer):
     class Meta:
