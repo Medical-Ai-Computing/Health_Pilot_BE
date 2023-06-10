@@ -26,9 +26,11 @@ class User(models.Model):
     MEMBERSHIP_FIELD = [('F', 'Free'), ('P','Premium')]
     CHOICES = [('M', 'Male'), ('F', 'Female'), ('O', 'Other')]
 
-    membership=models.CharField(choices=MEMBERSHIP_FIELD, null=True, blank=True, default='F', max_length=1)
+    membership=models.CharField(choices=MEMBERSHIP_FIELD, null=True,  #TODO make the default free
+                                blank=True, default='Free', max_length=1)
 
-    gender = models.CharField(choices=CHOICES, max_length=15, null=True, blank=True)
+    gender = models.CharField(choices=CHOICES, max_length=15, 
+                              null=True, blank=True)
     email = models.EmailField(blank=True, null=True)
     address = models.CharField(max_length = 250, blank=True, null=True)
     mobile_no = models.CharField(max_length = 15, blank=True, null=True)
@@ -140,16 +142,16 @@ class Disease(models.Model):
     #TODO i want to ask the user pregenancy based on gender type, and Default value to NO
     is_pregnant = models.CharField(max_length=2, choices=CHOICES, default='N')
 
-    def save(self, *args, **kwargs):
-        if self.patient.gender == 'Male':
-            self.is_pregnant = False
-            super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     if self.patient.gender == 'Male':
+    #         self.is_pregnant = False
+    #         super().save(*args, **kwargs)
 
     def __str__(self):
-        return "f{patient} - > {disease_name}"
+        return 'f{self.patient} -> {self.disease_name}'
     
 class Category(models.Model):
-    '''catagory of the artcile for recommendation system'''
+    '''catagory of the article for recommendation system'''
     category = models.IntegerField()
     # article_id = models.ForeignKey(Article, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
@@ -244,7 +246,7 @@ class Membership(models.Model):
         '''membership active period is 30 days or 1 month'''
         self.membership_type = 'Premium'
         self.end_date = timezone.now() + timezone.timedelta(days=30) 
-        self.save()
+        self.end_date.save()
 
     def __str__(self):
         return f"{self.user.username}'s membership {self.membership_type}"
@@ -274,7 +276,7 @@ class HealthAssessmentSection(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return f"HealthAssessmentSection ({self.id})"
+        return f"HealthAssessmentSection ({self.user})"
     
 class Medication(models.Model):
     '''adding medication for a user with reminders and 

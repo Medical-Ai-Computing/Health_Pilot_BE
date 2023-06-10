@@ -9,7 +9,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id','username', 'full_name', 'gender', 'email', 'date_of_birth',
-                  'weight', 'height', 'membership', 'mobile_no', 'address', 'country'] #  'country', object not serializable fix it maybe by get_queryset
+                  'weight', 'height', 'membership', 'mobile_no', 'address', 'country', 'age']
         read_only_fields = ['id']
 
 class UserProfileSerializer(serializers.ModelSerializer):
