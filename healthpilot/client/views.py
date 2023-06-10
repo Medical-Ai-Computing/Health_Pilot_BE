@@ -10,6 +10,7 @@ from rest_framework import generics, mixins, status, viewsets
 
 import logging
 from django.http import Http404
+from django.shortcuts import get_object_or_404
 from django.http import QueryDict
 from django.utils import timesince, timezone
 from .models import User, EmergencyContact, Disease, Article, PatientDoctor, Payment, Membership, \
@@ -62,22 +63,24 @@ class ArticleAPIView(mixins.CreateModelMixin,
 
 class EmergencyContactAPIView(mixins.CreateModelMixin,
                        mixins.RetrieveModelMixin,
-                       mixins.UpdateModelMixin,
                        mixins.ListModelMixin,
                        mixins.DestroyModelMixin,
                        GenericViewSet):
-    '''user can list create retrive and update and destroy emergency contacts'''
+    '''user can list create retrive and update and destroy emergency contacts in general'''
 
     serializer_class = EmergencyContactSerializer
     queryset = EmergencyContact.objects.all()
 
-class UserEmergencyContactViewset(mixins.RetrieveModelMixin,
-                                    mixins.ListModelMixin,
+class UserEmergencyContactViewset(mixins.CreateModelMixin,
+                                mixins.RetrieveModelMixin,
+                                mixins.DestroyModelMixin,
+                                mixins.UpdateModelMixin,
+                                mixins.ListModelMixin,
                                     GenericViewSet):
-    '''user can list retrive users/emergency contacts'''
+    '''specific user can create list retrive his emergency_contacts destroy and update it'''
     serializer_class = EmergencyContactSerializer
 
-    lookup_field = 'patient'
+    # lookup_field = 'patient'
 
     def get_queryset(self, *args, **kwargs):
         user_id = self.kwargs['users_id']
@@ -93,9 +96,11 @@ class DiseaseViewSet(mixins.CreateModelMixin,
                     mixins.UpdateModelMixin,
                     mixins.RetrieveModelMixin,
                     mixins.ListModelMixin,
+                    mixins.DestroyModelMixin,
                     GenericViewSet):
+    # user can delete specific disease in case he want to not send it doctor
     serializer_class = DiseaseSerializer
-    queryset = Disease.objects.all() #TODO  for some reason the data is not being saved
+    queryset = Disease.objects.all()
 
 
 class UserDoctorViewSet(mixins.CreateModelMixin,
@@ -103,7 +108,7 @@ class UserDoctorViewSet(mixins.CreateModelMixin,
                   mixins.UpdateModelMixin,
                   mixins.ListModelMixin,
                   mixins.DestroyModelMixin,
-                  GenericViewSet): #TODO filter docktors for specific users like User_emergency
+                  GenericViewSet):
     ''' api view method for User personal doctors to send datas
     1. Create Doctors
     2. List doctors
