@@ -3,25 +3,27 @@ from client.models import User
 
 class PrivateChat(models.Model):
     participants = models.ManyToManyField(User, related_name='private_chats')
+    # There must have to be only two users so raise errors
 
     def __str__(self):
-        return 'private Chat ID {id}'
+        return f'private Chat ID {self.id}'
 
 class GroupChat(models.Model):
+    id = models.IntegerField(primary_key=True, unique=True, null=False)
     name = models.CharField(max_length=255)
     participants = models.ManyToManyField(User, related_name='group_chats')
     total_user = models.IntegerField(default=1)
 
-    # def save(self, *args, **kwargs):
-    #     self.total_user = self.participants.count()
-    #     super(GroupChat, self).save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        self.total_user = self.participants.count()
+        super(GroupChat, self).save(*args, **kwargs)
 
     def __str__(self):
-        return 'Group {name}'
+        return f'Group -> {self.name}'
 
 class Message(models.Model):
-    chat = models.ForeignKey(PrivateChat, on_delete=models.CASCADE, related_name='private_messages', null=True)
-    group_chat = models.ForeignKey(GroupChat, on_delete=models.CASCADE, related_name='group_messages', null=True)
+    priv_chat = models.ForeignKey(PrivateChat, on_delete=models.CASCADE, related_name='private_messages', null=True, blank=True)
+    group_chat = models.ForeignKey(GroupChat, on_delete=models.CASCADE, related_name='group_messages', null=True, blank=True)
     sender = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)

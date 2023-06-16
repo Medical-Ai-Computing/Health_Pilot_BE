@@ -1,5 +1,6 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework import status, viewsets
 from channels.layers import get_channel_layer
 from django.shortcuts import get_object_or_404
 
@@ -12,16 +13,16 @@ class PrivateChatView(APIView):
         serializer = PrivateChatSerializer(data=request.data)
         if serializer.is_valid():
             private_chat = serializer.save()
-            return Response(PrivateChatSerializer(private_chat).data)
-        return Response(serializer.errors, status=400)
+            return Response(PrivateChatSerializer(private_chat).data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class GroupChatView(APIView):
     def post(self, request):
         serializer = GroupChatSerializer(data=request.data)
         if serializer.is_valid():
             group_chat = serializer.save()
-            return Response(GroupChatSerializer(group_chat).data)
-        return Response(serializer.errors, status=400)
+            return Response(GroupChatSerializer(group_chat).data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class MessageView(APIView):
     def post(self, request):
@@ -37,11 +38,10 @@ class MessageView(APIView):
                 f'chat_{chat_id}',
                 {'type': 'chat_message', 'message': MessageSerializer(message).data}
             )
-            return Response(MessageSerializer(message).data)
-        return Response(serializer.errors, status=400)
+            return Response(MessageSerializer(message).data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # Chatbot Conversation
-from rest_framework import viewsets
 
 class ConversationViewSet(viewsets.ModelViewSet):
     queryset = Conversation.objects.all()
