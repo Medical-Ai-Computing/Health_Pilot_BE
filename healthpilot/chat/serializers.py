@@ -4,14 +4,14 @@ from .models import PrivateChat, GroupChat, Message, Conversation, ChatbotMessag
 class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
-        fields = '__all__'
+        fields = ['sender','content', 'id', 'priv_chat', 'group_chat']
 
 class PrivateChatSerializer(serializers.ModelSerializer):
     private_messages = MessageSerializer(many=True, read_only=True)
 
     class Meta:
         model = PrivateChat
-        fields = '__all__'
+        fields = ['id', 'participants', 'private_messages']
 
 class GroupChatSerializer(serializers.ModelSerializer):
     group_messages = MessageSerializer(many=True, read_only=True)
