@@ -11,13 +11,13 @@ router = routers.DefaultRouter()
 router.register('conversations', ConversationViewSet)
 
 conversation_router = routers.NestedDefaultRouter(router, r'conversations', lookup='conversation')
-conversation_router.register('chatbotmessages', ChatbotMessageViewSet, basename='conversation-messages')
+conversation_router.register('chatbotmessages', ChatbotMessageViewSet, basename='conversation_messages')
 
 
 
 urlpatterns = [
-    path('private-chat/', PrivateChatView.as_view(), name='private_chat'),
-    path('group-chat/', GroupChatView.as_view(), name='group_chat'),
+    path('private_chat/', PrivateChatView.as_view(), name='private_chat'),
+    path('group_chat/', GroupChatView.as_view(), name='group_chat'),
     path('message/', MessageView.as_view(), name='message'),
     path('', include(router.urls)),
     path('', include(conversation_router.urls)),
