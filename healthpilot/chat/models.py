@@ -1,7 +1,8 @@
 from django.db import models
 from client.models import User
 
-class PrivateChat(models.Model):
+
+class PrivateChat(models.Model): #TODO make the id a uuid
     participants = models.ManyToManyField(User, related_name='private_chats')
     # There must have to be only two users so raise errors
 
@@ -27,6 +28,14 @@ class Message(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE)
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
+    seen = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"From: {self.sender}"
+
+    class Meta:
+        ordering = ('timestamp',)
+#TODO i want to delay it since it have a lot of feature envluding status online, seen message, friends, cancel friend request, videos .....
 
 # chatboot conversation
 
