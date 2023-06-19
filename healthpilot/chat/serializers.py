@@ -18,7 +18,7 @@ class GroupChatSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = GroupChat
-        fields = ['name', 'participants']
+        fields = ['name', 'participants', 'group_messages']
 
 
 # Chatbot serializer
