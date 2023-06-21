@@ -81,17 +81,33 @@ class ChatbotMessageViewSet(viewsets.ModelViewSet):
     queryset = ChatbotMessage.objects.all()
     serializer_class = ChatbotMessageSerializer
     
-    # @action(detail=False, methods=['post'])
     def create(self, request, *args, **kwargs):
         # try:
-        #     self.user = User.objects.get(id=kwargs['pk'], 
-        #                                  deleted_at=None)
+        user = User.objects.get(id=request.data['sender'], deleted_at=None)
+        print(user)
         # except User.DoesNotExist:
         #     return Response("User Does Not Exist.", 
         #                     status=status.HTTP_400_BAD_REQUEST)
-        print(request.data['context'], '***********************')
-        user_input = request.data['context']
-        response = get_completion_from_messages(user_input)
-        print(response)
 
-        return Response({'input': user_input, 'message': response})
+        user_input = request.data['context']
+        conversation = Conversation.objects.create(user=user)
+
+        # Save user's message
+        user_message = ChatbotMessage.objects.create(
+            conversation=conversation,
+            sender='user',
+            context=user_input
+        )
+        # Process user's message and generate chatbot's response
+        response = get_completion_from_messages([user_input])
+
+        # Save chatbot's response
+        chatbot_message = ChatbotMessage.objects.create(
+            conversation=conversation,
+            sender='chatbot',
+            context=response
+        )
+        return Response(
+            {'input': user_message.context, 'message': chatbot_message.context},
+            status=status.HTTP_201_CREATED
+        )
