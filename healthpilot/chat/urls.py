@@ -21,8 +21,7 @@ urlpatterns = [
     path('message/', MessageView.as_view(), name='message'),
     path('', include(router.urls)),
     path('', include(conversation_router.urls)),
-    # path('start_conversation/', StartConversationView.as_view(), name='start-conversation'),
-    # path('send_message/', SendMessageView.as_view(), name='send-message'),
-    # path('clear_conversation/', ClearConversationView.as_view(), name='clear-conversation'),
+    path('chatbot_messages/<int:pk>/conversation_history/', ChatbotMessageViewSet.as_view({'get': 'conversation_history'})),
+    # path('conversations/chatbotmessages/', ChatbotMessageViewSet.as_view({'post': 'create'}), name='conversation_message_creat'),
 ]
 
