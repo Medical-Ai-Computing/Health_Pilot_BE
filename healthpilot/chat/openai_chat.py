@@ -10,17 +10,11 @@ def get_completion_from_messages(messages, model="gpt-3.5-turbo", temperature=0)
     )
     return response.choices[0].message["content"]
 
-# def collect_messages(prompt):
-#     panels = []
-#     prompt = ''
-#     context.append({'role':'user', 'content':f"{prompt}"})
-#     response = get_completion_from_messages(context)
-#     context.append({'role':'assistant', 'content':f"{response}"})
-#     panels = panels.append('User:', prompt)
-#     panels = panels.append(('Assistant:',response))
-#     print(panels, '*************************************************')
-#     return panels
+def collect_messages(prompt):
+    panels = context.copy()
 
+    panels.append({'role':'user', 'content':f"{prompt}"})
+    return panels
 
 context = [ {'role':'system', 'content':"""
 you are a health bot named 'HealthPilot', an automated service designed to assist user in collecting and 
@@ -51,12 +45,9 @@ to feel free to share users health concerns, and together you will work towards 
 for user. Remember if user ask question which is out of top or out of health related question remind them you are 
 there to assist on health related problem and conversation"""} ]
 
-# collect_messages('hi my name is menilik')
-# messages =  context.copy()
-# messages.append(messages)
-# response = get_completion_from_messages(messages)
-# print(response)
-
+# response = collect_messages('Please note that while')
+# final = get_completion_from_messages(response)
+# print(final)
 
 
 
