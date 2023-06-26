@@ -33,3 +33,9 @@ class ConversationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Conversation
         fields = ('user', 'messages', 'timestamp')
+
+class BotConversationSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = ChatbotMessage
+        fields = ['sender', 'context']

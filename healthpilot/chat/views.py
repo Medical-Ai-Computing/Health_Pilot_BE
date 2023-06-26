@@ -7,12 +7,12 @@ from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAdminUser
 from asgiref.sync import async_to_sync
 
-from .openai_chat import get_completion_from_messages
+from .openai_chat import get_completion_from_messages, collect_messages
 
 from client.models import User, UserProfile
 from .models import PrivateChat, GroupChat, Message, Conversation, ChatbotMessage
 from .serializers import PrivateChatSerializer, GroupChatSerializer, MessageSerializer, \
-                         ConversationSerializer, ChatbotMessageSerializer
+                         ConversationSerializer, ChatbotMessageSerializer, BotConversationSerializer
 
 class PrivateChatView(APIView):
     permission_classes = [IsAdminUser]
@@ -80,18 +80,56 @@ class ConversationViewSet(viewsets.ModelViewSet):
 class ChatbotMessageViewSet(viewsets.ModelViewSet):
     queryset = ChatbotMessage.objects.all()
     serializer_class = ChatbotMessageSerializer
-    
-    # @action(detail=False, methods=['post'])
-    def create(self, request, *args, **kwargs):
-        # try:
-        #     self.user = User.objects.get(id=kwargs['pk'], 
-        #                                  deleted_at=None)
-        # except User.DoesNotExist:
-        #     return Response("User Does Not Exist.", 
-        #                     status=status.HTTP_400_BAD_REQUEST)
-        print(request.data['context'], '***********************')
-        user_input = request.data['context']
-        response = get_completion_from_messages(user_input)
-        print(response)
 
-        return Response({'input': user_input, 'message': response})
+    @action(detail=True, methods=['get'])
+    def conversation_history(self, request, pk=None):
+        try:
+            conversation = User.objects.get(id=pk)
+        except User.DoesNotExist:
+            return Response("User Does Not Exist.", 
+                            status=status.HTTP_400_BAD_REQUEST)
+        try:
+            conversation_history = Conversation.objects.get(user=pk)
+            
+        except Conversation.DoesNotExist:
+            return Response("Conversation Does Not Exist.", 
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        chatbot_messages = ChatbotMessage.objects.filter(conversation=conversation_history).order_by('-timestamp')
+        serializer = BotConversationSerializer(chatbot_messages, many=True) #TODO improve the api urls ordering and accessing, appendind chats
+        return Response(serializer.data)
+    
+    def create(self, request, *args, **kwargs):
+        try:
+            user = User.objects.get(id=request.data['sender'], deleted_at=None)
+            user_name = user.username
+        except User.DoesNotExist:
+            return Response("User Does Not Exist.", 
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        user_input = request.data['context']
+        try:
+            conversation = Conversation.objects.get(user=user)
+        except Conversation.DoesNotExist:
+            print('Creating Conversation instance---------')
+            conversation = Conversation.objects.create(user=user)
+        # Save user's message
+        user_message = ChatbotMessage.objects.create(
+            conversation=conversation,
+            sender=user.id,
+            context=user_input
+        )
+        # Process user's message and generate chatbot's response
+        response = collect_messages(f'Hello my name is {user_name} ,' + user_input)
+        response = get_completion_from_messages(response)
+
+        # Save chatbot's response
+        chatbot_message = ChatbotMessage.objects.create(
+            conversation=conversation,
+            sender='Assistant',
+            context=response
+        )
+        return Response(
+            {'input': user_message.context, 'message': chatbot_message.context},
+            status=status.HTTP_201_CREATED
+        )
