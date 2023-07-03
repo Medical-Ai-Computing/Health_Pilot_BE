@@ -6,7 +6,8 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = "django-insecure-%#dj!@wrqjelzr*uo#75d13rw&6x92o=$v6qx4ol5#dl5uj^!3"
-DEBUG = True
+
+DEBUG = os.environ.get('DEBUG','True')
 
 ALLOWED_HOSTS = ['*']
 CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8000']
@@ -22,8 +23,9 @@ INSTALLED_APPS = [
     'client.apps.ClientConfig',
     'chat.apps.ChatConfig',
     'drf_yasg',
-    'django_countries',
+    # 'django_countries',
     'channels',
+    'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [
@@ -70,7 +72,7 @@ DATABASES = {
         'USER': os.environ.get('DB_USER', 'mark'),
         'PASSWORD': os.environ.get('DB_PASS', '1Amynameiso**'),
         'HOST': os.environ.get('DB_HOST', 'db'),
-        'PORT': 5432,
+        'PORT': os.environ.get('DB_PORT', 5432),
         'DISABLE_SERVER_SIDE_CURSORS': True,
     }
 }
@@ -103,14 +105,17 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
-STATIC_ROOT = '/static'
-# STATIC_ROOT = BASE_DIR / "staticfiles"
+# STATIC_ROOT = '/static'
+STATIC_ROOT = BASE_DIR / "staticfiles"
 STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
     # "DEFAULT_PERMISSION_CLASSES": ["healthpilot.permissions.CustomPermission", ],
+    'DEFAULT_AUTHENTICATION_CLASSES': ( 
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        ),
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     'PAGE_SIZE': 50,
 }
