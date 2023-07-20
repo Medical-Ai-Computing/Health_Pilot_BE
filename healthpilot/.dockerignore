@@ -17,3 +17,9 @@ launch.sh
 .vscode
 .pytest_cache
 celerybeat-schedule
+
+# we want to innore migration files
+**/migrations/**
+
+# static folder
+staticfiles/
