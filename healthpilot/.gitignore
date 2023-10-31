@@ -144,3 +144,10 @@ GitHub.sublime-settings
 !.vscode/launch.json 
 !.vscode/extensions.json 
 .history
+
+# we want to innore migration files
+**/migrations/**
+/migrations/**
+
+# ignore static file
+staticfiles

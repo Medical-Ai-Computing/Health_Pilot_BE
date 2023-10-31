@@ -53,7 +53,7 @@ class DiseaseSerializer(serializers.ModelSerializer):
     '''serialize Disease of users'''
     class Meta:
         model = Disease
-        fields = ['patient', 'disease_name', 'no_of_symp', 'symptoms_name', 
+        fields = ['patient', 'disease_name', 'no_of_symp', 'symptoms_name', 'good_sleep_pattern',
                   'confidence', 'consultdoctor', 'allargis', 'blood_type', 'blood_pressure',
                    'chronic_condition', 'smoke', 'alcohol', 'recent_surgeries', 'infectious_diseases', 'is_pregnant' ]
 

@@ -138,6 +138,7 @@ class Disease(models.Model):
     smoke = models.CharField(max_length=2, choices=CHOICES, default='N')
     alcohol = models.CharField(max_length=2, choices=CHOICES, default='N')
     recent_surgeries = models.CharField(max_length=2, choices=CHOICES, default='N')
+    good_sleep_pattern = models.CharField(max_length=2, choices=CHOICES, default='N')
     infectious_diseases = models.CharField(max_length=2, choices=CHOICES, default='N')
     #TODO i want to ask the user pregenancy based on gender type, and Default value to NO
     is_pregnant = models.CharField(max_length=2, choices=CHOICES, default='N')
