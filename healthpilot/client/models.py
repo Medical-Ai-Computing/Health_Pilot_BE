@@ -165,7 +165,7 @@ class Category(models.Model):
 class Tag(models.Model):
     '''Tag of the article for recommendation system'''
     tag = models.IntegerField()
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=250)
     categories = models.ManyToManyField(Category)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
@@ -185,6 +185,7 @@ class Article(models.Model):
     tags = models.ManyToManyField(Tag, related_name='articles', blank=True)
     link = models.CharField(max_length=250, blank=True)
     headline = models.TextField(null=True, blank=True)
+    body = models.TextField(null=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 

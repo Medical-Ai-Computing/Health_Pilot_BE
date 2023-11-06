@@ -41,6 +41,20 @@ services:
 
     depends_on:
       - healthpilot
+
+  celery:
+    build: .
+    restart: always
+    command: celery -A healthpilot worker -l info
+    volumes:
+      - ./celerydata/celery/:/usr/src/app/
+    env_file:
+      - ".env_file"
+    networks:
+      - health-net
+    depends_on:
+      - db
+
   # newly added server
   daphne:
     build: .

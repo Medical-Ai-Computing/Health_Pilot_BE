@@ -1,5 +1,5 @@
 aiohttp==3.7.4.post0
-amqp==5.0.6
+amqp==5.0.9
 asgiref==3.7.1
 asttokens==2.0.5
 async-timeout==3.0.1
@@ -8,8 +8,8 @@ autobahn==23.1.2
 Automat==22.10.0
 backports.zoneinfo;python_version<"3.9"
 billiard==3.6.4.0
-celery==5.2.2
 certifi==2023.5.7
+celery==5.2.7
 cffi==1.15.1
 chardet==4.0.0
 charset-normalizer==3.1.0
@@ -42,7 +42,7 @@ incremental==22.10.0
 inflection==0.5.1
 itypes==1.2.0
 Jinja2==3.1.2
-kombu==5.2.2
+kombu==5.2.3
 MarkupSafe==2.1.2
 multidict==6.0.4
 openai==0.27.8
