@@ -1,4 +1,5 @@
 import requests
+import os
 import csv
 import json
 from bs4 import BeautifulSoup
@@ -41,28 +42,17 @@ def extract_articles(html_content):
     print(f'\n\nTitle: {article_data["title"]}\nBody: {article_data["body"]}')
     return article_data
 
+
 def crawl_website(url):
     """
     Crawls the given website and extracts news articles' titles and bodies.
     """
     html_content = fetch_html(url)
     articles = extract_articles(html_content)
-    # print(articles, "--------------------------------_________________")
+
     return articles
 
 if __name__ == "__main__":
     target_url = 'https://www.who.int/news/item/07-11-2023-who-launches-guide-on-whole-genome-sequencing-use-as-a-tool-for-foodborne-disease-surveillance-and-response'
     news_articles = crawl_website(target_url)
 
-
-    #save to text file
-    # with open('news_articles.txt', 'w', encoding='utf-8') as file:
-    #     for idx, article in enumerate(news_articles, start=1):
-    #         file.write(f'Article {idx} - Title: {article["title"]}\nBody: {article["body"]}\n{"-"*50}\n')
-    #save to csv file
-    # with open('news_articles.csv', 'w', encoding='utf-8', newline='') as csvfile:
-    #     fieldnames = ['Title', 'Body']
-    #     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-    #     writer.writeheader()
-    #     for idx, article in enumerate(news_articles, start=1):
-    #         writer.writerow({'Title': article['title'], 'Body': article['body']})
