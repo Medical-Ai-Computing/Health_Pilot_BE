@@ -13,7 +13,7 @@ def get_completion_from_messages(messages, model="gpt-3.5-turbo", temperature=0)
 def collect_messages(prompt):
     panels = context.copy()
 
-    panels.append({'role':'user', 'content':f"{prompt}"})
+    panels.append({'role':'user', 'content':f"{prompt}"}) #TODO unfinished tasks
     return panels
 
 context = [ {'role':'system', 'content':"""

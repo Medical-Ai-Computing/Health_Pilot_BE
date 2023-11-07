@@ -1,5 +1,5 @@
 aiohttp==3.7.4.post0
-amqp==5.0.9
+amqp==5.1.1
 asgiref==3.7.1
 asttokens==2.0.5
 async-timeout==3.0.1
@@ -7,6 +7,7 @@ attrs==23.1.0
 autobahn==23.1.2
 Automat==22.10.0
 backports.zoneinfo;python_version<"3.9"
+beautifulsoup4==4.12.2
 billiard==3.6.4.0
 certifi==2023.5.7
 celery==5.2.7
@@ -26,6 +27,8 @@ daphne==3.0.2
 debugpy==1.5.1
 decorator==5.1.1
 Django==4.2.1
+django-celery-beat==2.5.0
+django-celery-results==2.5.1
 django-countries==7.5.1
 django-channels==0.7.0
 djangorestframework==3.14.0
@@ -54,7 +57,13 @@ pyasn1==0.5.0
 pyasn1-modules==0.3.0
 pycparser==2.21
 pyOpenSSL==23.1.1
+pytest==6.2.5
+pytest-celery==0.0.0
+pytest-django==4.4.0
+pytest-factoryboy==2.1.0
+python-crontab==2.5.1
 pytz==2023.3
+rabbitmq==0.2.0
 requests==2.31.0
 ruamel.yaml==0.17.26
 ruamel.yaml.clib==0.2.7
@@ -71,3 +80,8 @@ vine==5.0.0
 wcwidth==0.2.6
 yarl==1.9.2
 zope.interface==6.0
+jsonschema==4.1.0
+simplejson==3.17.5
+pandas==2.1.2
+lxml==4.9.3
+html5lib==1.1

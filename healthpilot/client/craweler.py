@@ -1,0 +1,68 @@
+import requests
+import csv
+import json
+from bs4 import BeautifulSoup
+
+def fetch_html(url):
+    """
+    Fetches the HTML content of the given URL.
+    """
+    response = requests.get(url)
+    # print(response.text)
+    return response.text
+
+def extract_articles(html_content):
+    """
+    Extracts news articles' titles and bodies from the given HTML content using BeautifulSoup.
+    """
+    # Parse the JSON-like content
+
+    soup = BeautifulSoup(html_content, 'html.parser')
+    
+    # Extract title from <h1> element
+    title_header = soup.find('div', {'class': 'sf-item-header-wrapper'})
+    title = title_header.find('h1').text.strip() if title_header else ''
+
+    # Extract body from <div class="sf_colsIn col-md-8"> and <p> elements
+    body_div = soup.find('div', {'class': 'sf_colsIn col-md-8'})
+    body_paragraphs = []
+    if body_div:
+        print(body_div)
+        nested_div = body_div.find_all('div')[1]  # Get the second <div> element
+        paragraphs = nested_div.find_all('p')  # Find all <p> elements inside the second <div>
+        for paragraph in paragraphs:
+            body_paragraphs.append(paragraph.text.strip())
+    
+    article_data = {
+        'title': title,
+        'body': '\n'.join(body_paragraphs)
+    }
+
+    print(f'Title: {article_data["title"]}\nBody: {article_data["body"]}')
+    return article_data
+
+def crawl_website(url):
+    """
+    Crawls the given website and extracts news articles' titles and bodies.
+    """
+    html_content = fetch_html(url)
+    articles = extract_articles(html_content)
+    # print(articles, "--------------------------------_________________")
+    return articles
+
+if __name__ == "__main__":
+    target_url = 'https://www.who.int/news/item/07-11-2023-who-launches-guide-on-whole-genome-sequencing-use-as-a-tool-for-foodborne-disease-surveillance-and-response'
+    news_articles = crawl_website(target_url)
+
+
+    #save to text file
+    # with open('news_articles.txt', 'w', encoding='utf-8') as file:
+    #     for idx, article in enumerate(news_articles, start=1):
+    #         file.write(f'Article {idx} - Title: {article["title"]}\nBody: {article["body"]}\n{"-"*50}\n')
+    #save to csv file
+    # with open('news_articles.csv', 'w', encoding='utf-8', newline='') as csvfile:
+    #     fieldnames = ['Title', 'Body']
+    #     writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+    #     writer.writeheader()
+    #     for idx, article in enumerate(news_articles, start=1):
+    #         writer.writerow({'Title': article['title'], 'Body': article['body']})

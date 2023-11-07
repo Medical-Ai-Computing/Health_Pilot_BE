@@ -16,8 +16,8 @@ app.autodiscover_tasks()
 
 app.conf.beat_schedule = {
 
-    # 'Database backup': {
-    #     'task': 'core.tasks.backup_database',
-    #     'schedule': crontab(day_of_week='*/3', hour=0, minute=0)
-    #                     },
+    'News Craweler': {
+        'task': 'client.tasks.crawel_news',
+        'schedule': crontab(minute="*/3")
+                        },
 }

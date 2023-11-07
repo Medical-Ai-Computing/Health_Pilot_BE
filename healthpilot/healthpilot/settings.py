@@ -7,7 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = "django-insecure-%#dj!@wrqjelzr*uo#75d13rw&6x92o=$v6qx4ol5#dl5uj^!3"
 
-DEBUG = os.environ.get('DEBUG','True')
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8000']
@@ -25,6 +25,8 @@ INSTALLED_APPS = [
     'drf_yasg',
     # 'django_countries',
     'channels',
+    'django_celery_beat',
+    'django_celery_results',
     'rest_framework_simplejwt',
 ]
 
@@ -127,5 +129,9 @@ CELERY_TASK_SERIALIZER = 'json'
 
 TEST_RUNNER = 'djcelery.contrib.test_runner.CeleryTestSuiteRunner'
 CELERY_CACHE_BACKEND = 'django-cache'
-# celery beat
+
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+CELERY_RESULT_BACKEND = 'django-db'
+
+CELERY_BROKER_URL = os.environ.get(
+    "CELERY_BROKER_URL", 'pyamqp://healthpilot:1234@rabbitmq:5672/')

@@ -42,10 +42,21 @@ services:
     depends_on:
       - healthpilot
 
+  rabbitmq:
+    image: rabbitmq:3.9.10-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    restart: on-failure
+    env_file:
+      - ".env_file"
+    networks:
+      - health-net
+
   celery:
     build: .
     restart: always
-    command: celery -A healthpilot worker -l info
+    command: celery -A healthpilot worker -l info --uid=nobody --gid=nogroup
     volumes:
       - ./celerydata/celery/:/usr/src/app/
     env_file:
@@ -54,6 +65,20 @@ services:
       - health-net
     depends_on:
       - db
+      - rabbitmq
+
+
+  celery-beat:
+    build: .
+    volumes:
+      - ./celerydata/beat/:/usr/src/app/
+    command: celery -A healthpilot beat -l info
+    env_file:
+      - ".env_file"
+    depends_on:
+       - celery
+       - rabbitmq
+       - db
 
   # newly added server
   daphne:
