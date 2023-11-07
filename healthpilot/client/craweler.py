@@ -24,21 +24,22 @@ def extract_articles(html_content):
     title = title_header.find('h1').text.strip() if title_header else ''
 
     # Extract body from <div class="sf_colsIn col-md-8"> and <p> elements
-    body_div = soup.find('div', {'class': 'sf_colsIn col-md-8'})
-    body_paragraphs = []
+    body_div = soup.find('article', {'class': 'sf-detail-body-wrapper'})
+    nested_paragraphs = []
     if body_div:
-        print(body_div)
-        nested_div = body_div.find_all('div')[1]  # Get the second <div> element
-        paragraphs = nested_div.find_all('p')  # Find all <p> elements inside the second <div>
-        for paragraph in paragraphs:
-            body_paragraphs.append(paragraph.text.strip())
+        divs = body_div.find_all('div')
+        if len(divs) >= 2:
+            nested_div = divs[1]
+            paragraphs = nested_div.find_all('p')
+            for paragraph in paragraphs:
+                nested_paragraphs.append(paragraph.text.strip())
     
     article_data = {
         'title': title,
-        'body': '\n'.join(body_paragraphs)
+        'body': '\n'.join(nested_paragraphs)
     }
 
-    print(f'Title: {article_data["title"]}\nBody: {article_data["body"]}')
+    print(f'\n\nTitle: {article_data["title"]}\nBody: {article_data["body"]}')
     return article_data
 
 def crawl_website(url):
