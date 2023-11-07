@@ -28,9 +28,8 @@ def extract_articles(html_content):
     nested_paragraphs = []
     if body_div:
         divs = body_div.find_all('div')
-        if len(divs) >= 2:
-            nested_div = divs[1]
-            paragraphs = nested_div.find_all('p')
+        for div in divs:
+            paragraphs = div.find_all('p')
             for paragraph in paragraphs:
                 nested_paragraphs.append(paragraph.text.strip())
     
