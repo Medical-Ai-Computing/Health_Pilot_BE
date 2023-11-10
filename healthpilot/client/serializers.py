@@ -47,7 +47,7 @@ class ArticleSerializer(serializers.ModelSerializer):
     '''get article and post from craweld data or create a new'''
     class Meta:
         model = Article
-        fields = ['id','author', 'categories', 'tags', 'headline', 'body', 'link', 'updated_at']
+        fields = ['id','author', 'categories', 'headline', 'body', 'keywords', 'link', 'image_url', 'read_time', 'created_at']
 
 class DiseaseSerializer(serializers.ModelSerializer):
     '''serialize Disease of users'''

@@ -179,13 +179,15 @@ class Article(models.Model):
     from other places/platform ------> we may crawel articles'''
 
     # article_id=models.IntegerField(unique=True) # article id must be unique
-    author = models.CharField(max_length=250)
+    author = models.CharField(max_length=250, default='WHO')
     categories = models.ManyToManyField(
         Category, related_name='articles',  blank=True)
-    tags = models.ManyToManyField(Tag, related_name='articles', blank=True)
     link = models.CharField(max_length=250, blank=True)
-    headline = models.TextField(null=True, blank=True)
+    keywords = models.CharField(blank=True, null=True)
+    headline = models.TextField(null=True, blank=True, unique=True)
     body = models.TextField(null=True)
+    image_url = models.CharField(blank=True, null=True)
+    read_time = models.CharField(null=True, blank=1, default='1')
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
