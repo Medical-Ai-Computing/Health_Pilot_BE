@@ -6,7 +6,10 @@ WORKDIR /healthpilot
 RUN apt-get update
 RUN apt-get -y install gcc
 RUN pip install --upgrade pip
-# RUN addgroup app && adduser --system --ingroup app app
+
+# Install spaCy and download English language model
+RUN pip install spacy && python -m spacy download en_core_web_sm
+
 # USER app
 
 COPY requirements.txt /healthpilot

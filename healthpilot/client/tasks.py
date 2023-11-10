@@ -2,6 +2,7 @@ import re
 import math
 import logging
 import requests
+import spacy
 from bs4 import BeautifulSoup
 from celery import shared_task
 from .models import Article, Tag
@@ -26,13 +27,16 @@ def crawel_news():
         # Average reading speed in words per minute
         words_per_minute = 300
 
-        # Calculate reading time in minutes
         reading_time_minutes = word_count / words_per_minute
-        # Round up to the nearest minute
         reading_time_minutes = math.ceil(reading_time_minutes)
-
         return reading_time_minutes
 
+    def extract_keywords(text):
+        nlp = spacy.load("en_core_web_sm")
+        doc = nlp(text)
+        keywords = [token.text for token in doc if token.is_alpha and not token.is_stop]
+        return keywords
+    
     def fetch_articles_from_api(base_url, top, skip):
         api_url = f"https://www.who.int/api/hubs/newsitems?sf_site=15210d59-ad60-47ff-a542-7ed76645f0c7&sf_provider\
                     =OpenAccessDataProvider&sf_culture=en&$orderby=PublicationDateAndTime%20desc&$select=ItemDefaultUrl,\
@@ -40,7 +44,6 @@ def crawel_news():
         response = requests.get(api_url)
         if response.status_code == 200:
             data = response.json()
-            print(data)
             return data.get('value', [])
         return []
 
@@ -64,13 +67,15 @@ def crawel_news():
 
         body = '\n'.join(nested_paragraphs)
         read_time = calculate_reading_time(body)
+        keywords = extract_keywords(body)
 
         article_data = { #TODO add read time
             'title': title,
             'thumbnail_url': thumbnail_url,
             'link': article_url,
             'read_time': read_time,
-            'body': body
+            'body': body,
+            'keywords': keywords
         }
 
         return article_data
@@ -84,6 +89,7 @@ def crawel_news():
                 body=article_data['body'],
                 image_url=article_data['thumbnail_url'],
                 read_time=article_data['read_time'],
+                keywords=article_data['keywords'],
                 link=f"https://www.who.int/news/item{article_data['link']}"
             )
             # Save the Article object to the database
