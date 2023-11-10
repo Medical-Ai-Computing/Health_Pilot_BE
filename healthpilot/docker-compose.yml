@@ -70,15 +70,19 @@ services:
 
   celery-beat:
     build: .
+    restart: always
     volumes:
       - ./celerydata/beat/:/usr/src/app/
     command: celery -A healthpilot beat -l info
+    networks:
+      - health-net
     env_file:
       - ".env_file"
     depends_on:
        - celery
        - rabbitmq
        - db
+       - healthpilot
 
   # newly added server
   daphne:
