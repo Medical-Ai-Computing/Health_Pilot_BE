@@ -70,7 +70,7 @@ services:
       - rabbitmq_healthpilot
 
 
-  beat-beat_healthpilot:
+  celery-beat_healthpilot:
     build: .
     restart: always
     volumes:
