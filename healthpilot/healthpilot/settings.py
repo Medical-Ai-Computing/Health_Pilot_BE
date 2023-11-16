@@ -10,7 +10,8 @@ SECRET_KEY = "django-insecure-%#dj!@wrqjelzr*uo#75d13rw&6x92o=$v6qx4ol5#dl5uj^!3
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8000']
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8000', 
+                        'http://localhost:8001', 'http://127.0.0.1:8001']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -70,11 +71,11 @@ CHANNEL_LAYERS = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME', 'healthpilot'),
-        'USER': os.environ.get('DB_USER', 'mark'),
-        'PASSWORD': os.environ.get('DB_PASS', '1Amynameiso**'),
-        'HOST': os.environ.get('DB_HOST', 'db'),
-        'PORT': os.environ.get('DB_PORT', 5432),
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASS'),
+        'HOST': os.environ.get('DB_HOST'),
+        'PORT': os.environ.get('DB_PORT'),
         'DISABLE_SERVER_SIDE_CURSORS': True,
     }
 }

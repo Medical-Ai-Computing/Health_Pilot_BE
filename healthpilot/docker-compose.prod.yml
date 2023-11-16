@@ -22,7 +22,7 @@ services:
     command: >
       bash -c "python manage.py migrate --no-input && \
                python manage.py collectstatic  --no-input && \
-               daphne -b 0.0.0.0 -p 8000 healthpilot.asgi:application"
+               daphne -b 0.0.0.0 -p 8001 healthpilot.asgi:application"
 
     ports:
     - "8001:80"
@@ -31,6 +31,7 @@ services:
       - health-net
     depends_on:
       - db_healthpilot
+
   nginx_healthpilot:
     build: ./nginx
     volumes:
@@ -88,9 +89,9 @@ services:
   # newly added server
   daphne_healthpilot:
     build: .
-    command: daphne -b 0.0.0.0 -p 8000 healthpilot.asgi:application
+    command: daphne -b 0.0.0.0 -p 8001 healthpilot.asgi:application
     expose:
-      - 8000
+      - 8001
     depends_on:
       - db_healthpilot
     volumes:
