@@ -18,6 +18,6 @@ app.conf.beat_schedule = {
 
     'News Craweler': {
         'task': 'client.tasks.crawel_news',
-        'schedule': crontab(minute="*/3")
+        'schedule': crontab(minute="*/30")
                         },
 }
