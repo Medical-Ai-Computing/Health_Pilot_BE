@@ -5,6 +5,8 @@ services:
   db_healthpilot:
     image: postgres:14.1-alpine
     restart: always
+    ports:
+      - "5433:5432"
     networks:
       - health-net
     volumes:
