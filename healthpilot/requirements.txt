@@ -76,12 +76,12 @@ txaio==23.1.1
 typing_extensions==4.6.1
 uritemplate==4.1.1
 urllib3==2.0.2
-vine==5.0.0
 wcwidth==0.2.6
 yarl==1.9.2
+lxml==4.9.3
 zope.interface==6.0
 jsonschema==4.1.0
 simplejson==3.17.5
-pandas==2.1.2
-lxml==4.9.3
 html5lib==1.1
+pandas==2.1.2
+vine==5.0.0
