@@ -2,7 +2,7 @@ version: "3.0"
 
 services:
 
-  db_healthpilot:
+  db:
     image: postgres:14.1-alpine
     restart: always
     ports:
@@ -32,9 +32,9 @@ services:
     networks:
       - health-net
     depends_on:
-      - db_healthpilot
+      - db
 
-  nginx_healthpilot:
+  nginx:
     build: ./nginx
     volumes:
       - static:/static
@@ -46,7 +46,7 @@ services:
     depends_on:
       - healthpilot
 
-  rabbitmq_healthpilot:
+  rabbitmq:
     image: rabbitmq:3.9.10-management-alpine
     ports:
       - "5672:5672"
@@ -57,7 +57,7 @@ services:
     networks:
       - health-net
 
-  celery_healthpilot:
+  celery:
     build: .
     restart: always
     command: celery -A healthpilot worker -l info --uid=nobody --gid=nogroup
@@ -68,11 +68,11 @@ services:
     networks:
       - health-net
     depends_on:
-      - db_healthpilot
-      - rabbitmq_healthpilot
+      - db
+      - rabbitmq
 
 
-  celery-beat_healthpilot:
+  celery-beat:
     build: .
     restart: always
     volumes:
@@ -83,19 +83,18 @@ services:
     env_file:
       - ".env_file"
     depends_on:
-       - celery_healthpilot
-       - rabbitmq_healthpilot
-       - db_healthpilot
+       - celery
+       - rabbitmq
+       - db
        - healthpilot
 
-  # newly added server
-  daphne_healthpilot:
+  daphne:
     build: .
     command: daphne -b 0.0.0.0 -p 8000 healthpilot.asgi:application
     expose:
       - 8000
     depends_on:
-      - db_healthpilot
+      - db
     volumes:
       - static:/static
     networks:
