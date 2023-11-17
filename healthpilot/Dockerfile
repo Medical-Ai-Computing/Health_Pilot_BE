@@ -10,6 +10,9 @@ RUN pip install --upgrade pip
 # Install spaCy and download English language model
 RUN pip install spacy && python -m spacy download en_core_web_sm
 
+#support for http/2
+RUN pip install Twisted[http2,tls]
+
 # USER app
 
 COPY requirements.txt /healthpilot
