@@ -1,0 +1,109 @@
+version: "3.0"
+
+services:
+
+  db:
+    image: postgres:14.1-alpine
+    restart: always
+    ports:
+      - "5432:5432"
+    networks:
+      - health-net
+    volumes:
+      - ./healthpilotdata/db:/var/lib/postgresql/healthpilotdata
+    env_file:
+      - ".env_file"
+
+  healthpilot:
+    build: .
+    restart: always
+    volumes:
+      - .:/healthpilot
+      - dem:/etc/systemd/system:rw
+      - static:/static
+    command: >
+      bash -c "python manage.py migrate --no-input && \
+               python manage.py collectstatic  --no-input && \
+               daphne -b 0.0.0.0 -p 8000 healthpilot.asgi:application"
+
+    expose:
+      - 8000
+
+    networks:
+      - health-net
+    depends_on:
+      - db
+
+  nginx:
+    build: ./nginx
+    volumes:
+      - static:/static
+    networks:
+      - health-net
+    ports:
+      - "8002:80"
+
+    depends_on:
+      - healthpilot
+
+  rabbitmq:
+    image: rabbitmq:3.9.10-management-alpine
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    restart: on-failure
+    env_file:
+      - ".env_file"
+    networks:
+      - health-net
+
+  celery:
+    build: .
+    restart: always
+    command: celery -A healthpilot worker -l info --uid=nobody --gid=nogroup
+    volumes:
+      - ./celerydata/celery/:/usr/src/app/
+    env_file:
+      - ".env_file"
+    networks:
+      - health-net
+    depends_on:
+      - db
+      - rabbitmq
+
+
+  celery-beat:
+    build: .
+    restart: always
+    volumes:
+      - ./celerydata/beat/:/usr/src/app/
+    command: celery -A healthpilot beat -l info
+    networks:
+      - health-net
+    env_file:
+      - ".env_file"
+    depends_on:
+       - celery
+       - rabbitmq
+       - db
+       - healthpilot
+
+  daphne:
+    build: .
+    command: daphne -b 0.0.0.0 -p 8000 healthpilot.asgi:application
+    expose:
+      - 8000
+    depends_on:
+      - db
+    volumes:
+      - static:/static
+    networks:
+      - health-net
+      
+volumes:
+  static:
+  dem: null
+
+networks:
+  health-net:
+    driver: bridge
