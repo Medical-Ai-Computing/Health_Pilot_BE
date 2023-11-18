@@ -10,8 +10,8 @@ SECRET_KEY = "django-insecure-%#dj!@wrqjelzr*uo#75d13rw&6x92o=$v6qx4ol5#dl5uj^!3
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8000', 
-                        'http://localhost:8001', 'http://127.0.0.1:8001',
+CSRF_TRUSTED_ORIGINS = [ 
+                        'http://localhost:9000', 'http://127.0.0.1:9000',
                         'https://stagingrep.mindplex.ai', 'https://staginghealth.mindplex.ai']
 
 INSTALLED_APPS = [

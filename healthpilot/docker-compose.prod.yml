@@ -21,10 +21,10 @@ services:
       bash -c 
         "python manage.py migrate --no-input && \
          python manage.py collectstatic  --no-input && \
-         daphne -b 0.0.0.0 -p 8000 healthpilot.asgi:application"
+         daphne -b 0.0.0.0 -p 9000 healthpilot.asgi:application"
 
     expose:
-      - 8000
+      - 9000
 
     networks:
       - health-net
@@ -38,7 +38,7 @@ services:
     networks:
       - health-net
     ports:
-      - "8000:80"
+      - "9000:90"
 
     depends_on:
       - healthpilot
@@ -88,9 +88,9 @@ services:
 
   daphne:
     build: .
-    command: daphne -b 0.0.0.0 -p 8000 healthpilot.asgi:application
+    command: daphne -b 0.0.0.0 -p 9000 healthpilot.asgi:application
     expose:
-      - 8000
+      - 9000
     depends_on:
       - db
     volumes:
