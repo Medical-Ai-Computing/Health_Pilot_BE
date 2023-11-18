@@ -1,5 +1,6 @@
 from .models import Profile, UserActivation
 from rest_framework import generics
+from rest_framework.response import Response
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
