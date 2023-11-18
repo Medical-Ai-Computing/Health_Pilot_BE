@@ -32,6 +32,7 @@ services:
       - db
   nginx:
     build: ./nginx
+    restart: always
     volumes:
       - static:/static
     networks:
