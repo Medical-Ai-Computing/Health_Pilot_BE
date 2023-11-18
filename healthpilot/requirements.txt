@@ -85,3 +85,4 @@ simplejson==3.17.5
 html5lib==1.1
 pandas==2.1.2
 vine==5.0.0
+Pillow==10.1.0
