@@ -15,6 +15,7 @@ router.register('users/(?P<users_id>[^/.]+)/user_doctors', SingleUserDoctorViews
 router.register('health_assessment_sections', HealthAssessmentSectionViewSet, basename='user_health_assessment')
 router.register('medications', MedicationViewSet, basename='medications' )
 router.register('profile', UserProfileViewSet, basename='profile')
+router.register('language', LanguageViewSet, basename='language')
 
 
 urlpatterns = [

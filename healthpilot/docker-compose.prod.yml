@@ -89,6 +89,7 @@ services:
   daphne:
     build: .
     command: daphne -b 0.0.0.0 -p 9000 healthpilot.asgi:application
+    restart: always
     expose:
       - 9000
     depends_on:

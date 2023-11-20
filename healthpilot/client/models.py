@@ -35,7 +35,10 @@ class User(models.Model):
     address = models.CharField(max_length = 250, blank=True, null=True)
     mobile_no = models.CharField(max_length = 15, blank=True, null=True)
     country = models.CharField(blank=True, null=True)
-    # country = CountryField(blank=True, null=True, blank_label="(Select country)")
+
+    bmi = models.FloatField(blank=True, null=True) # Body mass index
+    bpm = models.IntegerField(blank=True, null=True, default='120')
+    sleep_time = models.FloatField(blank=True, null=True, default='8')
 
     @property
     def age(self):
@@ -45,6 +48,17 @@ class User(models.Model):
         if today.month < db.month or today.month == db.month and today.day < db.day:
             age -= 1
         return age
+
+    def save(self, *args, **kwargs):
+        # Calculate BMI before saving the user
+        if self.weight and self.height:
+            self.bmi = self.calculate_bmi()
+        super().save(*args, **kwargs)
+
+    def calculate_bmi(self):
+        # BMI formula: weight (kg) / (height (m) ^ 2)
+        height_in_meters = self.height / 100  # Convert height to meters
+        return self.weight / (height_in_meters ** 2)
 
     class Meta:
         constraints = [
@@ -287,11 +301,11 @@ class Medication(models.Model):
         incorporating it into the user's health assessment story.'''
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='medications')
-    name = models.CharField(max_length=100)
-    dosage = models.CharField(max_length=50)
-    frequency = models.CharField(max_length=50)
-    start_date = models.DateField()
-    end_date = models.DateField(null=True, blank=True)
+    name = models.CharField(max_length=100) # medication name
+    dosage = models.CharField(max_length=50) # how many mili-gram
+    frequency = models.CharField(max_length=50) # usage perday
+    start_date = models.DateField(auto_now=True)  #TODO on the mobile app add this field
+    end_date = models.DateField(null=True, blank=True) # opitional field
 
     def clean(self):
         super().clean()
@@ -301,10 +315,18 @@ class Medication(models.Model):
     def save(self, *args, **kwargs):
         self.clean()  # Run full validation before saving
         super().save(*args, **kwargs)
-
+ 
     def __str__(self):
         return self.name
     
+class Language_Preference(models.Model):
+    """api used to store users prefered language"""
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    language = models.CharField(max_length=20)
+    created_at = models.DateTimeField(auto_now=True, null=True)
+
+    def __str__(self):
+        return self.user + self.language
 
 
 # the blow code is for future and premium users

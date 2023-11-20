@@ -1,5 +1,5 @@
 from django.db.models import Q
-from .models import User, Article, Disease, EmergencyContact, Category, \
+from .models import User, Article, Disease, EmergencyContact, Category, Language_Preference,\
                     PatientDoctor, Payment , UserProfile, HealthAssessmentSection, Medication
 from rest_framework import serializers
 from django_countries.serializers import CountryFieldMixin
@@ -8,9 +8,9 @@ class UserSerializer(serializers.ModelSerializer):
     '''Used to get and update users'''
     class Meta:
         model = User
-        fields = ['id','username', 'full_name', 'gender', 'email', 'date_of_birth',
+        fields = ['id','username', 'full_name', 'gender', 'email', 'date_of_birth', 'bmi', 'bpm', 'sleep_time', # avarage sleep time
                   'weight', 'height', 'membership', 'mobile_no', 'address', 'country', 'age']
-        read_only_fields = ['id']
+        read_only_fields = ['id', 'bmi', 'bpm']
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -77,3 +77,8 @@ class MedicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Medication
         fields = '__all__'
+
+class LanguageSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Language_Preference
+        fields = ['user','language', 'created_at']

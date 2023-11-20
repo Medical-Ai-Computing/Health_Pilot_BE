@@ -14,8 +14,8 @@ from django.shortcuts import get_object_or_404
 from django.http import QueryDict
 from django.utils import timesince, timezone
 from .models import User, EmergencyContact, Disease, Article, PatientDoctor, Payment, Membership, \
-                    UserProfile, HealthAssessmentSection, Medication
-from .serializers import UserSerializer, DiseaseSerializer, ArticleSerializer,\
+                    UserProfile, HealthAssessmentSection, Medication, Language_Preference
+from .serializers import UserSerializer, DiseaseSerializer, ArticleSerializer, LanguageSerializers,\
                         EmergencyContactSerializer, PatientDoctorSerializer, PaymentSerializer, \
                         UserProfileSerializer, HealthAssessmentSectionSerializer, MedicationSerializer
 
@@ -219,6 +219,33 @@ class MedicationViewSet(viewsets.ModelViewSet):
             subject = 'Medication Reminder'
             message = f"Don't forget to take your medication: {medication.name}"
             send_mail(subject, message, 'spyxmeni@gmail.com', [self.request.user.email])
+
+class LanguageViewSet(viewsets.ModelViewSet):
+    
+    '''This api is used to create and list users prefered language
+        user can also update there language preference
+        Retrive :
+        to retrive and update  pass User_Id as client/language/<user_id>'''
+    
+    queryset = Language_Preference.objects.all()
+    serializer_class = LanguageSerializers
+
+    def retrieve(self, request, pk=None):
+        user_language = get_object_or_404(Language_Preference, user__id=pk)
+        serializer = self.get_serializer(user_language)
+        return Response(serializer.data)
+    
+    def update(self, request, pk=None):
+        user_language = get_object_or_404(Language_Preference, user__id=pk)
+        serializer = self.get_serializer(user_language, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(serializer.errors, status=400)
+
+
 
 
 # class RateReviewView(View):
