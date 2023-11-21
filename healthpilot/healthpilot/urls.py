@@ -5,8 +5,8 @@ healthpilot URL Configuration
 from django.contrib import admin
 from django.urls import path
 from django.urls import path, include
+from django.views.generic import TemplateView
 
-# from django.conf.urls import url
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
@@ -36,8 +36,7 @@ urlpatterns = [
     path('chat/',include('chat.urls')),
     path('auth/',include('auth.urls')),
 
-    path('', schema_view.with_ui('swagger',         
-         cache_timeout=0), name='schema-swagger-ui'),
+    path('', TemplateView.as_view(template_name='homepage.html'), name='home'),
     path('swagger/', schema_view.with_ui('swagger',
          cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc',

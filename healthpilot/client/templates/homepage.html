@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Health Pilo Engine</title>
+    {% load static %}
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            color: #333;
+            background-color: #f7f7f7;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #ff6600;
+        }
+
+        .image-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .image-container img {
+            margin: 0 10px;
+            border-radius: 8px;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .image-container img:hover {
+            transform: scale(1.1);
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+            transition: color 0.3s ease-in-out;
+        }
+
+        a:hover {
+            color: #0056b3;
+            text-decoration: underline;
+        }
+
+        .explore-link {
+            font-size: 24px;
+            color: #4CAF50;
+            font-family: 'Helvetica', sans-serif;
+            font-weight: bold;
+        }
+
+        .contact-section {
+            width: 300px;
+            height: 120px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 8px;
+            text-align: center;
+            padding: 20px;
+            font-size: 16px;
+            color: #333;
+            transition: font-size 0.3s ease-in-out, background-color 0.3s ease-in-out;
+        }
+
+        .contact-section:hover {
+            font-size: 20px;
+            background-color: #4CAF50;
+            color: #fff;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Healthpilot Backend</h1>
+    <p>
+        Health-Pilot, Aims to revolutionize Healthcare through an AI-powered 
+        Mobile/web application. We offer a free version allowing users to receive 
+        health reports, share information with their doctors, and access a symptom 
+        analysis and recommendation system. Also provides personalized recommendations 
+        based on users' health history, similar people recommendation, a supportive 
+        community of Private and Group chat, symptom tracking, 
+        medication reminders, translation services, and valuable health tips with lates articles.
+    </p>
+
+    <!-- Container for images -->
+    <div class="image-container">
+        <img src="{% static 'images/1.jpeg' %}" alt="healthpilot image 1" />
+        <img src="{% static 'images/1.png' %}" alt="healthpilot image 2" />
+        <img src="{% static 'images/2.png' %}" alt="healthpilot image 3" />
+        <img src="{% static 'images/3.png' %}" alt="healthpilot image 4" />
+        <img src="{% static 'images/4.png' %}" alt="healthpilot image 5" />
+        <img src="{% static 'images/5.png' %}" alt="healthpilot image 6" />
+        <img src="{% static 'images/6.png' %}" alt="healthpilot image 7" />
+        <img src="{% static 'images/7.png' %}" alt="healthpilot image 8" />
+    </div>
+
+    <!-- Enhanced link -->
+    <p>
+        <span class="explore-link">Explore more on our APIs: <a href="/swagger">HealthPilot APIS</a>.</span>
+    </p>
+
+    <!-- Contact Section -->
+    <div class="contact-section">
+        Contact Developer: <br />
+        <strong>Name:</strong> Menilik Eshetu <br />
+        <strong>Email:</strong> menilik.eshetu@singularitynet.io <br />
+        <strong>Email:</strong> spyxmeni@gmail.com <br />
+        <strong>Phone:</strong> +251-919806843
+    </div>
+</body>
+
+</html>
