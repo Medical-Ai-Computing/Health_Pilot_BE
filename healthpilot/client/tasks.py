@@ -69,7 +69,7 @@ def crawel_news():
         read_time = calculate_reading_time(body)
         keywords = extract_keywords(body)
 
-        article_data = { #TODO add read time
+        article_data = {
             'title': title,
             'thumbnail_url': thumbnail_url,
             'link': article_url,

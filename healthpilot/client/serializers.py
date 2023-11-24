@@ -8,8 +8,8 @@ class UserSerializer(serializers.ModelSerializer):
     '''Used to get and update users'''
     class Meta:
         model = User
-        fields = ['id','username', 'full_name', 'gender', 'email', 'date_of_birth', 'bmi', 'bpm', 'sleep_time', # avarage sleep time
-                  'weight', 'height', 'membership', 'mobile_no', 'address', 'country', 'age']
+        fields = ['id','first_name', 'last_name', 'gender', 'age', 'email', 'bmi', 'bpm', 'sleep_time', # avarage sleep time
+                  'weight', 'height', 'membership', 'mobile_no', 'address', 'country']
         read_only_fields = ['id', 'bmi', 'bpm']
 
 class UserProfileSerializer(serializers.ModelSerializer):
@@ -30,7 +30,7 @@ class EmergencyContactSerializer(serializers.ModelSerializer):
     '''used to get information of emergency contacts'''
     class Meta:
         model = EmergencyContact
-        fields = ['first_name', 'last_name', 'relationship', 'address', 
+        fields = ['first_name', 'last_name', 'relationship',
                    'email', 'cell_phone', 'patient']
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -53,14 +53,14 @@ class DiseaseSerializer(serializers.ModelSerializer):
     '''serialize Disease of users'''
     class Meta:
         model = Disease
-        fields = ['patient', 'disease_name', 'no_of_symp', 'symptoms_name', 'good_sleep_pattern',
-                  'confidence', 'consultdoctor', 'allargis', 'blood_type', 'blood_pressure',
+        fields = ['patient', 'disease_name', 'symptoms_name', 'good_sleep_pattern',
+                  'consultdoctor', 'allargis', 'blood_type', 'hypertension',
                    'chronic_condition', 'smoke', 'alcohol', 'recent_surgeries', 'infectious_diseases', 'is_pregnant' ]
 
 class PatientDoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = PatientDoctor
-        fields = ['doctor_name', 'doctor_type', 'email', 'cell_phone', 'patient']
+        fields = ['first_name', 'last_name', 'doctor_type', 'email', 'cell_phone', 'patient']
         
 # payment serializers
 class PaymentSerializer(serializers.ModelSerializer):
@@ -76,7 +76,7 @@ class HealthAssessmentSectionSerializer(serializers.ModelSerializer):
 class MedicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Medication
-        fields = '__all__'
+        fields = ['user', 'medication_name', 'intake_per_day', 'how_much_dosage', 'start_date', 'end_date']
 
 class LanguageSerializers(serializers.ModelSerializer):
     class Meta:

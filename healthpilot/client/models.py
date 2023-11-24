@@ -8,11 +8,8 @@ from django.contrib.postgres.fields import ArrayField
 from datetime import date
 
 class User(models.Model):
-    username=models.CharField(max_length=50, null=True, blank=True)
-    full_name=models.CharField(max_length=50)
-    
-    # password = models.CharField(max_length=128, default='1234')
-    date_of_birth=models.DateField(null=True)
+    first_name=models.CharField(max_length=50, null=True)
+    last_name=models.CharField(max_length=50, null=True)
     age = models.PositiveIntegerField(null=True, blank=True)
     # weight in kilogram
     weight = models.FloatField(default=0)
@@ -40,15 +37,6 @@ class User(models.Model):
     bpm = models.IntegerField(blank=True, null=True, default='120')
     sleep_time = models.FloatField(blank=True, null=True, default='8')
 
-    @property
-    def age(self):
-        today = date.today()
-        db = self.date_of_birth
-        age = today.year - db.year
-        if today.month < db.month or today.month == db.month and today.day < db.day:
-            age -= 1
-        return age
-
     def save(self, *args, **kwargs):
         # Calculate BMI before saving the user
         if self.weight and self.height:
@@ -62,13 +50,12 @@ class User(models.Model):
 
     class Meta:
         constraints = [
-        models.UniqueConstraint(fields=['email', 'username'], name='unique name and email in a community'),
+        models.UniqueConstraint(fields=['email', 'first_name', 'last_name'], name='unique_name_and_email'),
         models.UniqueConstraint(fields=['email'], name='unique email', condition=(~Q(email=''))),
-        models.UniqueConstraint(fields=['username'], name='user_name must be unique')
     ]
         
     def __str__(self):
-        return f'{self.username} => id {self.id}'
+        return f'{self.first_name} => id {self.id}'
 
 class UserProfile(models.Model):
     '''user profile about me section'''
@@ -100,7 +87,6 @@ class EmergencyContact(models.Model):
     first_name=models.CharField(max_length=50)
     last_name=models.CharField(max_length=50)
     relationship=models.CharField(choices=RELATION_SHIP, max_length=15)
-    address=models.CharField(max_length=250)
     email=models.EmailField(blank=True, null=True)
     cell_phone=models.CharField(max_length=15, null=True)
     patient = models.ForeignKey(User , null=True, on_delete=models.SET_NULL, related_name='emergency_contacts')
@@ -137,30 +123,25 @@ class Disease(models.Model):
             ('DK', "I don't know")]
 
     patient = models.ForeignKey(User , null=True, on_delete=models.SET_NULL)
-    disease_name = models.CharField(max_length = 200)
-    no_of_symp = models.IntegerField()
-    symptoms_name = models.CharField(max_length=300)
-    confidence = models.DecimalField(max_digits=5, decimal_places=2)
-    consultdoctor = models.CharField(max_length = 200)
+    disease_name = models.CharField(max_length = 200, null=True)
+    # no_of_symp = models.IntegerField()
+    symptoms_name = models.CharField(max_length=300, null=True)
+    # confidence = models.DecimalField(max_digits=5, decimal_places=2)
+    consultdoctor = models.CharField(max_length = 200, default='No')
     allargis = models.CharField(max_length=400, null=True, blank=True)
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(default=timezone.now)
     # basic question with choices fileds
     blood_type = models.CharField(max_length=11, choices=BLOOD_TYPE_CHOICES, null=True, default='DK')
-    blood_pressure = models.CharField(max_length=2, choices=CHOICES,  default='')
-    chronic_condition = models.CharField(max_length=2, choices=CHOICES, default='N')
+    hypertension = models.CharField(max_length=2, choices=CHOICES,  default='') # high blood presure
+    chronic_condition = models.CharField(max_length=2, choices=CHOICES, default='N') # diabti,..
     smoke = models.CharField(max_length=2, choices=CHOICES, default='N')
     alcohol = models.CharField(max_length=2, choices=CHOICES, default='N')
     recent_surgeries = models.CharField(max_length=2, choices=CHOICES, default='N')
     good_sleep_pattern = models.CharField(max_length=2, choices=CHOICES, default='N')
     infectious_diseases = models.CharField(max_length=2, choices=CHOICES, default='N')
-    #TODO i want to ask the user pregenancy based on gender type, and Default value to NO
     is_pregnant = models.CharField(max_length=2, choices=CHOICES, default='N')
 
-    # def save(self, *args, **kwargs):
-    #     if self.patient.gender == 'Male':
-    #         self.is_pregnant = False
-    #         super().save(*args, **kwargs)
 
     def __str__(self):
         return 'f{self.patient} -> {self.disease_name}'
@@ -187,7 +168,7 @@ class Tag(models.Model):
     def __str__(self):
         return self.name
     
-class Article(models.Model):
+class Article(models.Model): # comment, like count, users(who commented)
 
     '''Article including the rss feed which come 
     from other places/platform ------> we may crawel articles'''
@@ -225,19 +206,24 @@ class PatientDoctor(models.Model):
                               ('PU', 'Pulmonologist'),    ('RA', 'Radiologist'),
                               ('RH', 'Rheumatologist'),   ('SU', 'Surgeon'),
                               ('UR', 'Urologist'),        ('OTHER', 'Other')]
+   
+    INFO_SEND_OPITION=[('D','Daily'),('W','weekly'),
+                       ('M','Monthly'),('BW','Bi-weekly')]
     
-    doctor_name = models.CharField(max_length=100)
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
     doctor_type = models.CharField(choices=SPECIALIZATION_CHOICES, max_length=5, default='OTHER', blank=True, null=True)
     email=models.EmailField(blank=True, null=True)
     cell_phone=models.CharField(max_length=15, null=True)
     patient = models.ForeignKey(User , null=True, on_delete=models.SET_NULL)
     created_at = models.DateTimeField(default=timezone.now)
+    sent_frequency = models.CharField(choices=INFO_SEND_OPITION, default='M')
 
     def __str__(self):
         for choice in self.SPECIALIZATION_CHOICES:
             if choice[0] == self.SPECIALIZATION_CHOICES:
-                return f"Dr. {self.doctor_name} ({choice[1]})"
-        return f"{self.doctor_name} (Other Specialty)"
+                return f"Dr. {self.first_name + '' + self.last_name} ({choice[1]})"
+        return f"{self.first_name} (Other Specialty)"
     
 # the down code is for payment and membership status
 
@@ -267,7 +253,7 @@ class Membership(models.Model):
         self.end_date.save()
 
     def __str__(self):
-        return f"{self.user.username}'s membership {self.membership_type}"
+        return f"{self.user.first_name}'s membership {self.membership_type}"
 
 class AdditionalFeatures(models.Model):
     '''a model for addition features such as notification and reminders'''
@@ -301,10 +287,10 @@ class Medication(models.Model):
         incorporating it into the user's health assessment story.'''
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='medications')
-    name = models.CharField(max_length=100) # medication name
-    dosage = models.CharField(max_length=50) # how many mili-gram
-    frequency = models.CharField(max_length=50) # usage perday
-    start_date = models.DateField(auto_now=True)  #TODO on the mobile app add this field
+    medication_name = models.CharField(max_length=100) # medication name
+    how_much_dosage = models.CharField(max_length=50, null=True) # how many in mili-gram
+    intake_per_day = models.CharField(max_length=50) # usage perday
+    start_date = models.DateField(auto_now=True, null=True)  #TODO on the mobile app add this field
     end_date = models.DateField(null=True, blank=True) # opitional field
 
     def clean(self):
@@ -332,7 +318,8 @@ class Language_Preference(models.Model):
 # the blow code is for future and premium users
 # class Doctor(models.Model):
 #     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
-#     full_name = models.CharField(max_length=100)
+#     first_name = models.CharField(max_length=50)
+#     last_name = models.CharField(max_length=50)
 #     date_of_birth = models.DateField()
 #     joined_at=models.DateTimeField(auto_now_add=True)
 #     deleted_at=models.DateTimeField(null=True, blank=True)
