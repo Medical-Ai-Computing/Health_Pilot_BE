@@ -9,13 +9,19 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            color: #333;
-            background-color: #f7f7f7;
+            color: #c2c2d6;
+            background-color: #132639;
             padding: 20px;
         }
 
         h1 {
             color: #ff6600;
+        }
+        h1:hover {
+            color: #684e3d;
+            font-size: 20px;
+            background-color:#2a3232;
+            transition: font-size 0.5s ease-in-out, background-color 0.3s ease-in-out;
         }
 
         .image-container {
@@ -29,6 +35,8 @@
             margin: 0 10px;
             border-radius: 8px;
             transition: transform 0.3s ease-in-out;
+            max-width: 10%; /* Ensure images don't exceed the container width */
+            height: auto; /* Maintain aspect ratio */
         }
 
         .image-container img:hover {
@@ -56,19 +64,19 @@
         .contact-section {
             width: 300px;
             height: 120px;
-            background-color: rgba(255, 255, 255, 0.8);
+            background-color:#19334d;
             border-radius: 8px;
             text-align: center;
             padding: 20px;
             font-size: 16px;
-            color: #333;
+            color: #b2cce6;
             transition: font-size 0.3s ease-in-out, background-color 0.3s ease-in-out;
         }
 
         .contact-section:hover {
             font-size: 20px;
-            background-color: #4CAF50;
-            color: #fff;
+            background-color:#75a3a3;
+            color: #194d33;
             font-weight: bold;
         }
     </style>
@@ -88,14 +96,14 @@
 
     <!-- Container for images -->
     <div class="image-container">
-        <img src="{% static 'images/1.jpeg' %}" alt="healthpilot image 1" />
-        <img src="{% static 'images/1.png' %}" alt="healthpilot image 2" />
-        <img src="{% static 'images/2.png' %}" alt="healthpilot image 3" />
-        <img src="{% static 'images/3.png' %}" alt="healthpilot image 4" />
-        <img src="{% static 'images/4.png' %}" alt="healthpilot image 5" />
-        <img src="{% static 'images/5.png' %}" alt="healthpilot image 6" />
-        <img src="{% static 'images/6.png' %}" alt="healthpilot image 7" />
-        <img src="{% static 'images/7.png' %}" alt="healthpilot image 8" />
+        <img src="{% static 'images/0.jpg' %}" alt="healthpilot image 1" />
+        <img src="{% static 'images/1.jpg' %}" alt="healthpilot image 2" />
+        <img src="{% static 'images/2.jpg' %}" alt="healthpilot image 3" />
+        <img src="{% static 'images/3.jpg' %}" alt="healthpilot image 4" />
+        <img src="{% static 'images/4.jpg' %}" alt="healthpilot image 5" />
+        <img src="{% static 'images/5.jpg' %}" alt="healthpilot image 6" />
+        <img src="{% static 'images/6.jpg' %}" alt="healthpilot image 7" />
+        <img src="{% static 'images/7.jpg' %}" alt="healthpilot image 8" />
     </div>
 
     <!-- Enhanced link -->
