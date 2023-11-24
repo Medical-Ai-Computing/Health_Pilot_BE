@@ -12,7 +12,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 CSRF_TRUSTED_ORIGINS = [ 
                         'http://localhost:9000', 'http://127.0.0.1:9000',
-                        'https://staginghealth.mindplex.io']
+                        'https://staginghealth.mindplex.ai']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
