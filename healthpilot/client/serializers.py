@@ -1,5 +1,5 @@
 from django.db.models import Q
-from .models import User, Article, Disease, EmergencyContact, Category, Language_Preference,\
+from .models import User, Article, Interaction, Disease, EmergencyContact, Category, Language_Preference,\
                     PatientDoctor, Payment , UserProfile, HealthAssessmentSection, Medication
 from rest_framework import serializers
 from django_countries.serializers import CountryFieldMixin
@@ -47,7 +47,13 @@ class ArticleSerializer(serializers.ModelSerializer):
     '''get article and post from craweld data or create a new'''
     class Meta:
         model = Article
-        fields = ['id','author', 'categories', 'headline', 'body', 'keywords', 'link', 'image_url', 'read_time', 'created_at']
+        fields = ['id','author', 'categories', 'headline', 'body', 'keywords', 'link', 
+                  'image_url', 'read_time', 'total_like', 'total_comment','created_at']
+
+class InteractionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Interaction
+        fields = '__all__'
 
 class DiseaseSerializer(serializers.ModelSerializer):
     '''serialize Disease of users'''

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import User, EmergencyContact, Disease, Tag, Category, Article, Medication, Language_Preference, \
-                    PatientDoctor, Membership, Payment, UserProfile, HealthAssessmentSection  # Rating_Review
+                    PatientDoctor, Membership, Payment, UserProfile, HealthAssessmentSection, Interaction
 
 admin.site.site_header = "Health Pilot ADMIN"
 admin.site.site_title = "Health Pilot Admin Portal"
@@ -61,6 +61,6 @@ class MedicationAdmin(admin.ModelAdmin):
 class LanguageAdmin(admin.ModelAdmin):
     list_display = [field.name for field in Language_Preference._meta.fields]
     
-# @admin.register(Rating_Review)
-# class RatingAdmin(admin.ModelAdmin):
-#     list_display = [field.name for field in Rating_Review._meta.fields]
+@admin.register(Interaction)
+class InteractionAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in Interaction._meta.fields]

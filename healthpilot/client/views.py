@@ -1,5 +1,5 @@
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from rest_framework.views import APIView
 from django.core.mail import send_mail
@@ -14,10 +14,10 @@ from django.shortcuts import get_object_or_404
 from django.http import QueryDict
 from django.utils import timesince, timezone
 from .models import User, EmergencyContact, Disease, Article, PatientDoctor, Payment, Membership, \
-                    UserProfile, HealthAssessmentSection, Medication, Language_Preference
+                    UserProfile, HealthAssessmentSection, Medication, Language_Preference, Interaction
 from .serializers import UserSerializer, DiseaseSerializer, ArticleSerializer, LanguageSerializers,\
                         EmergencyContactSerializer, PatientDoctorSerializer, PaymentSerializer, \
-                        UserProfileSerializer, HealthAssessmentSectionSerializer, MedicationSerializer
+                        UserProfileSerializer, HealthAssessmentSectionSerializer, MedicationSerializer, InteractionSerializer
 
 class UserAPIView(mixins.CreateModelMixin,
                        mixins.RetrieveModelMixin,
@@ -60,6 +60,59 @@ class ArticleAPIView(mixins.CreateModelMixin,
 
     serializer_class = ArticleSerializer
     queryset = Article.objects.all()
+
+class InteractionListCreateView(generics.ListCreateAPIView): 
+    """userd to create interation of like and comment 
+    also replay and returna all interactions"""
+    serializer_class = InteractionSerializer
+    queryset = Interaction.objects.all()
+
+    def get_queryset(self):
+        return Interaction.objects.filter(deleted_at=None)
+
+    def create(self, request, *args, **kwargs):
+        article = Article.objects.get(id=self.request.data.get('article'))
+        interaction_type = self.request.data.get('interaction_type')
+        user = User.objects.get(id=self.request.data.get('user'))
+
+        removed_interaction = Interaction.objects.filter(interaction_type=interaction_type, 
+                                                         user=user, article=article).first()
+        if removed_interaction:
+            print(f'status changed found, changing status...')
+            removed_interaction.deleted_at = timezone.now()
+            removed_interaction.save()
+            if interaction_type == 'like': 
+                article.total_like -= 1
+            elif interaction_type == 'comment':
+                article.total_comment -= 1
+            article.save()
+            return Response('interaction is removed', status=status.HTTP_200_OK)
+
+        if interaction_type == 'like':
+            article.total_like += 1
+        elif interaction_type == 'comment':
+            article.total_comment += 1
+        else:
+            return Response({'error': 'unknown interaction type!!'}, 
+                            status=status.HTTP_400_BAD_REQUEST)
+        article.save()
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(user=user, article=article, interaction_type=interaction_type)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+
+class InteractionCommentListCreateView(generics.ListCreateAPIView):
+    """Only return comment interactions when 
+    a user  click comment section in articles"""
+    serializer_class = InteractionSerializer
+    queryset = Interaction.objects.all()
+
+    def get_queryset(self):
+        article_id = self.kwargs.get('article_id')
+        return Interaction.objects.filter(article__id=article_id, interaction_type='comment', deleted_at=None)
 
 class EmergencyContactAPIView(mixins.CreateModelMixin,
                        mixins.RetrieveModelMixin,

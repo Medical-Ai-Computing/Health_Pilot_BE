@@ -33,7 +33,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('client/',include('client.urls')),
     path('chat/',include('chat.urls')),
-    path('auth/',include('auth.urls')),
+    # path('auth/',include('auth.urls')),
 
     path('', TemplateView.as_view(template_name='homepage.html'), name='home'),
     path('swagger/', schema_view.with_ui('swagger',

@@ -168,6 +168,7 @@ class Tag(models.Model):
     def __str__(self):
         return self.name
     
+    
 class Article(models.Model): # comment, like count, users(who commented)
 
     '''Article including the rss feed which come 
@@ -185,10 +186,30 @@ class Article(models.Model): # comment, like count, users(who commented)
     read_time = models.CharField(null=True, blank=1, default='1')
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
+    total_comment= models.PositiveIntegerField(default=0, null=True, blank=True)
+    total_like=models.PositiveIntegerField(default=0, null=True, blank=True)
+
 
     def __str__(self):
         return str(self.id)
     
+class Interaction(models.Model):
+    LIKE = 'like'
+    COMMENT = 'comment'
+    
+    INTERACTION_CHOICES = [
+        (LIKE, 'Like'),
+        (COMMENT, 'Comment'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name='interactions')
+    interaction_type = models.CharField(max_length=10, choices=INTERACTION_CHOICES)
+    text = models.TextField(blank=True, null=True)
+    parent_interaction = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(default=timezone.now)
+    deleted_at = models.DateTimeField(null=True, blank=True)
+
 class PatientDoctor(models.Model):
     '''used to send the health report of users to selected doctors
     and this is the doctor contact information'''
@@ -343,26 +364,3 @@ class Language_Preference(models.Model):
 #     disease = models.OneToOneField(Disease, null=True, on_delete=models.SET_NULL)
 #     consultation_date = models.DateField()
 #     status = models.CharField(max_length = 20)
-
-# class Rating_Review(models.Model):
-#     '''class for the doctors rating to appear in his
-#        profile so that user can choise a good doctors'''
-    
-#     patient = models.ForeignKey(User ,null=True, on_delete=models.SET_NULL)
-    # doctor = models.ForeignKey(Doctor ,null=True, on_delete=models.SET_NULL)
-    
-    # rating = models.IntegerField(default=0)
-    # review = models.TextField(blank=True) 
-
-
-    # @property
-    # def rating_is(self):
-    #     new_rating = 0
-    #     rating_obj = Rating_Review.objects.filter(doctor=self.doctor)
-    #     for i in rating_obj:
-    #         new_rating += i.rating
-       
-    #     new_rating = new_rating/len(rating_obj)
-    #     new_rating = int(new_rating)
-        
-    #     return new_rating
