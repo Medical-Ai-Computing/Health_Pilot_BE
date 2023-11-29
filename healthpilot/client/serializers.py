@@ -53,7 +53,8 @@ class ArticleSerializer(serializers.ModelSerializer):
 class InteractionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Interaction
-        fields = '__all__'
+        fields = ['user', 'article', 'interaction_type', 
+                  'text', 'parent_interaction', 'created_at']
 
 class DiseaseSerializer(serializers.ModelSerializer):
     '''serialize Disease of users'''

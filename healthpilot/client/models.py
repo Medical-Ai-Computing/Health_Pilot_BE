@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import models, CheckConstraint, Q
 from django.utils import timezone
 from django.db.models.query_utils import Q
 from django.core.exceptions import ValidationError
@@ -209,6 +209,14 @@ class Interaction(models.Model):
     parent_interaction = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE)
     created_at = models.DateTimeField(default=timezone.now)
     deleted_at = models.DateTimeField(null=True, blank=True)
+
+    # class Meta:
+    #     constraints = [
+    #         CheckConstraint(
+    #             check=Q(parent_interaction__isnull=True) | Q(parent_interaction__interaction_type='comment'),
+    #             name='parent_interaction_comment_constraint'
+    #         )
+    #     ]
 
 class PatientDoctor(models.Model):
     '''used to send the health report of users to selected doctors

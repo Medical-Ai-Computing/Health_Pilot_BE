@@ -21,8 +21,8 @@ router.register('language', LanguageViewSet, basename='language')
 urlpatterns = [
     path('', include(router.urls)),
     path('payment/', PaymentCreateView.as_view(), name='payment'),
-    path('interactions/', InteractionListCreateView.as_view(), name='interaction-list-create'),
-    path('article/<int:article_id>/interactions/', InteractionCommentListCreateView.as_view(), name='interaction-comment'),
+    path('interactions/', InteractionListCreateView.as_view(), name='interaction-list-create'), # create all interaction like and comments
+    path('article/<int:article_id>/interactions/', InteractionCommentListCreateView.as_view(), name='interaction-comment'), # return comments for single article
 
 
 ]

@@ -62,7 +62,7 @@ class ArticleAPIView(mixins.CreateModelMixin,
     queryset = Article.objects.all()
 
 class InteractionListCreateView(generics.ListCreateAPIView): 
-    """userd to create interation of like and comment 
+    """user to create and remove interation of like and comment 
     also replay and returna all interactions"""
     serializer_class = InteractionSerializer
     queryset = Interaction.objects.all()
@@ -76,15 +76,17 @@ class InteractionListCreateView(generics.ListCreateAPIView):
         user = User.objects.get(id=self.request.data.get('user'))
 
         removed_interaction = Interaction.objects.filter(interaction_type=interaction_type, 
-                                                         user=user, article=article).first()
+                                                         user=user, article=article, deleted_at__isnull=True).first()
         if removed_interaction:
             print(f'status changed found, changing status...')
             removed_interaction.deleted_at = timezone.now()
             removed_interaction.save()
             if interaction_type == 'like': 
-                article.total_like -= 1
+                if article.total_like > 0:  # Ensure total_like doesn't go below zero
+                    article.total_like -= 1
             elif interaction_type == 'comment':
-                article.total_comment -= 1
+                if article.total_comment > 0:  # Ensure total_comment doesn't go below zero
+                    article.total_comment -= 1
             article.save()
             return Response('interaction is removed', status=status.HTTP_200_OK)
 
@@ -104,7 +106,7 @@ class InteractionListCreateView(generics.ListCreateAPIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
-class InteractionCommentListCreateView(generics.ListCreateAPIView):
+class InteractionCommentListCreateView(generics.ListAPIView):
     """Only return comment interactions when 
     a user  click comment section in articles"""
     serializer_class = InteractionSerializer
@@ -112,7 +114,8 @@ class InteractionCommentListCreateView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         article_id = self.kwargs.get('article_id')
-        return Interaction.objects.filter(article__id=article_id, interaction_type='comment', deleted_at=None)
+        return Interaction.objects.filter(article__id=article_id, 
+                                          interaction_type='comment', deleted_at=None)
 
 class EmergencyContactAPIView(mixins.CreateModelMixin,
                        mixins.RetrieveModelMixin,
