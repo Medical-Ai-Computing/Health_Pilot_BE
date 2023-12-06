@@ -99,7 +99,7 @@ def crawel_news():
     base_url = "https://www.who.int/news/item/"
     top = 100
     skip = 0
-    total_articles = 10  # Specify the total number of articles you want to fetch
+    total_articles = 1000  # Specify the total number of articles you want to fetch
 
     all_articles = []
     while skip < total_articles:
